@@ -1,6 +1,7 @@
 import osUtil from "os-utils";
 import fs from "fs";
 import os from "os";
+import { BrowserWindow } from "electron";
 
 const POLLING_INTERVAL = 1000; // 1 second
 
@@ -16,7 +17,7 @@ export interface IDiskUsageInfo {
   totalMemoryGB: number;
 }
 
-export function pollResource() {
+export function pollResource(mainWindow: BrowserWindow) {
   setInterval(async () => {
     const cpuUsage = await getCpuUsage();
     const freeMemory = getMemoryUsage();
@@ -26,6 +27,7 @@ export function pollResource() {
       memory: freeMemory,
       disk: diskUsage,
     };
+    mainWindow.webContents.send("resourceUsage", usage);
     console.log("Resource Usage:", usage);
   }, POLLING_INTERVAL);
 }
@@ -40,7 +42,7 @@ function getMemoryUsage() {
   return 1 - osUtil.freememPercentage();
 }
 
-function getDiskUsage(): Promise<IDiskUsageInfo> {
+export function getDiskUsage(): Promise<IDiskUsageInfo> {
   return new Promise<IDiskUsageInfo>((resolve) => {
     fs.statfs(process.platform === "win32" ? "C://" : "/", (err, stats) => {
       if (err) {
