@@ -11,6 +11,7 @@ app.on("ready", () => {
       preload: getPreloadPath(),
     },
   });
+
   if (isDev()) {
     mainWindow.loadURL("http://localhost:5123");
   } else {
@@ -22,4 +23,8 @@ app.on("ready", () => {
   ipcMain.handle("getStaticData", () => {
     return getDiskUsage();
   });
+});
+
+app.on("window-all-closed", () => {
+  app.quit();
 });
