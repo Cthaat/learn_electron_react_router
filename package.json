@@ -10,9 +10,13 @@
     "email": "your.email@example.com"
   },
   "scripts": {
-    "dev": "vite",
-    "dev:electron": "yarn run build && tsc --project src/electron/tsconfig.json && electron .",
+    "dev": "npm-run-all --parallel dev:react dev:electron",
+    "dev:react": "vite",
+    "dev:electron": "yarn run build && yarn run transpile:electron && cross-env NODE_ENV=development electron .",
+    "electron": "electron .",
     "build": "tsc -b && vite build",
+    "build:electron": "yarn run build && yarn run transpile:electron",
+    "start:electron": "npm-run-all --parallel  build:electron electron",
     "lint": "eslint .",
     "preview": "vite preview",
     "transpile:electron": "tsc --project src/electron/tsconfig.json",
@@ -21,23 +25,26 @@
     "dist:linux": "yarn run transpile:electron && yarn run build && electron-builder --linux --x64"
   },
   "dependencies": {
+    "npm-run-all": "^4.1.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",
+    "@types/os-utils": "^0.0.4",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react": "^4.3.4",
+    "cross-env": "^7.0.3",
     "electron": "^35.2.1",
     "electron-builder": "^26.0.12",
     "eslint": "^9.22.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^16.0.0",
+    "os-utils": "^0.0.14",
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.26.1",
-    "cross-env": "^7.0.3",
     "vite": "^6.3.1"
   }
 }
