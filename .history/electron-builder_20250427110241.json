@@ -1,0 +1,17 @@
+{
+  "appId": "com.n-ziermann.prepare",
+  "files": [
+    "dist_electron",
+    "dist_react"
+  ],
+  "mac": {
+    "target": "dmg"
+  },
+  "linux": {
+    "target": "AppImage",
+    "category": "Utility"
+  },
+  "win": {
+    "target": ["porta"]
+  }
+}
