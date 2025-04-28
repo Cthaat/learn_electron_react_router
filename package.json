@@ -16,7 +16,7 @@
     "electron": "electron .",
     "build": "tsc -b && vite build",
     "build:electron": "yarn run build && yarn run transpile:electron",
-    "start:electron": "npm-run-all --parallel  build:electron electron",
+    "start:electron": "npm-run-all build:electron electron",
     "lint": "eslint .",
     "preview": "vite preview",
     "transpile:electron": "tsc --project src/electron/tsconfig.json",
