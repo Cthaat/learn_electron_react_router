@@ -10,7 +10,7 @@
     "email": "your.email@example.com"
   },
   "scripts": {
-    "dev": "vite",
+    "dev:react": "vite",
     "dev:electron": "yarn run build && tsc --project src/electron/tsconfig.json && electron .",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
