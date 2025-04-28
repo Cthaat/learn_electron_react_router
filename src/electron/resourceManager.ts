@@ -1,15 +1,47 @@
 import osUtil from "os-utils";
+import fs from "fs";
+import os from "os";
 
 const POLLING_INTERVAL = 500;
 
 export function pollResources() {
-  setInterval(() => {
-    getCupUsage();
+  setInterval(async () => {
+    const cpuUsage = await getCupUsage();
+    const ramUsage = getRamUsage();
+    const storageData = getStorageData();
+    console.log({ cpuUsage, ramUsage, storageData: storageData.usage });
   }, POLLING_INTERVAL);
 }
 
 function getCupUsage() {
-  osUtil.cpuUsage((percentage) =>
-    console.log(`CPU Usage: ${percentage * 100}%`)
-  );
+  return new Promise((resolve) => {
+    osUtil.cpuUsage(resolve);
+  });
+}
+
+function getRamUsage() {
+  return 1 - osUtil.freememPercentage();
+}
+
+function getStorageData() {
+  const stats = fs.statfsSync(process.platform === "win32" ? "C://" : "/");
+  const total = stats.bsize * stats.blocks;
+  const free = stats.bsize * stats.bfree;
+
+  return {
+    total: Math.floor(total / 1_000_000_000),
+    usage: 1 - free / total,
+  };
+}
+
+export function getStaticData() {
+  const totalStorage = getStorageData().total;
+  const cpuModel = os.cpus()[0].model;
+  const totalMemoryGB = Math.floor(osUtil.totalmem() / 1024);
+
+  return {
+    totalStorage,
+    cpuModel,
+    totalMemoryGB,
+  };
 }
