@@ -822,6 +822,11 @@
   dependencies:
     undici-types "~6.21.0"
 
+"@types/os-utils@^0.0.4":
+  version "0.0.4"
+  resolved "https://registry.npmmirror.com/@types/os-utils/-/os-utils-0.0.4.tgz#d26863ed7de0a52fc0566131e2b61615ed00595e"
+  integrity sha512-TdQ/6GHzq8YMsDOXHfit8sDD1VjLnqC61sI7ICocwREw/68V5C/bjex+/Jya3XRD3FgGyj6fhTqhbVrXeh8UJg==
+
 "@types/plist@^3.0.1":
   version "3.0.5"
   resolved "https://registry.npmmirror.com/@types/plist/-/plist-3.0.5.tgz#9a0c49c0f9886c8c8696a7904dd703f6284036e0"
@@ -3311,6 +3316,11 @@ ora@^5.1.0:
     log-symbols "^4.1.0"
     strip-ansi "^6.0.0"
     wcwidth "^1.0.1"
+
+os-utils@^0.0.14:
+  version "0.0.14"
+  resolved "https://registry.npmmirror.com/os-utils/-/os-utils-0.0.14.tgz#29e511697b1982b8c627722175fe39797ef64156"
+  integrity sha512-ajB8csaHLBvJOYsHJkp8YdO2FvlBbf/ZxaYQwXXRDyQ84UoE+uTuLXxqd0shekXMX6Qr/pt/DDyLMRAMsgfWzg==
 
 own-keys@^1.0.1:
   version "1.0.1"
