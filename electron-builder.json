@@ -1,6 +1,9 @@
 {
   "appId": "com.n-ziermann.prepare",
   "icon": "/public/icon.png",
+  "extraResources": [
+    "dist_electron/preload.cjs"
+  ],
   "files": [
     "dist_electron",
     "dist_react"
