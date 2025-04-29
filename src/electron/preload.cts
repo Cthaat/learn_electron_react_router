@@ -6,5 +6,5 @@ electron.contextBridge.exposeInMainWorld("electron", {
       callback({ stats });
     });
   },
-  getStaticData: () => console.log("getStaticData"),
-});
+  getStaticData: () => electron.ipcRenderer.invoke("getStaticData"),
+} satisfies Window["electron"]);

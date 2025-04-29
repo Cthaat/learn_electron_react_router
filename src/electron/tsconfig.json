@@ -5,6 +5,7 @@
     "module": "NodeNext",
     "outDir": "../../dist_electron",
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "types": ["../../types.d.ts"]
   }
 }

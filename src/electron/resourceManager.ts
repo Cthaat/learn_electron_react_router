@@ -13,7 +13,7 @@ export function pollResources(mainWindow: BrowserWindow) {
     mainWindow.webContents.send("statistic", {
       cpuUsage,
       ramUsage,
-      storageData: storageData.usage,
+      storageUsage: storageData.usage,
     });
   }, POLLING_INTERVAL);
 }
