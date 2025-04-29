@@ -8,9 +8,6 @@ export type ChartProps = {
   height?: number;
 };
 
-/**
- * 图表组件 - 包装 BaseChart 并提供额外的逻辑
- */
 export function Chart(props: ChartProps) {
   // 确保我们有数据可以显示
   const validData = useMemo(() => {

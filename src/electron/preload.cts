@@ -6,10 +6,10 @@ electron.contextBridge.exposeInMainWorld("electron", {
       callback(stats);
     });
   },
-  getStaticData: () => ipcInveke("getStaticData"),
+  getStaticData: () => ipcInvoke("getStaticData"),
 } satisfies Window["electron"]);
 
-function ipcInveke<Key extends keyof EventPayloadMapping>(
+function ipcInvoke<Key extends keyof EventPayloadMapping>(
   key: Key
 ): Promise<EventPayloadMapping[Key]> {
   return electron.ipcRenderer.invoke(key);
