@@ -6,3 +6,9 @@ export function getPreloadPath(): string {
   const __dirname = path.dirname(__filename);
   return path.join(__dirname, "preload.cjs");
 }
+
+export function getUIPath(): string {
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
+  return path.join(__dirname, "..", "dist_react", "index.html");
+}
