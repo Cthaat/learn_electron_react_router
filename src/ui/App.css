@@ -11,9 +11,11 @@
   will-change: filter;
   transition: filter 300ms;
 }
+
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
+
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
@@ -22,6 +24,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -39,4 +42,111 @@
 
 .read-the-docs {
   color: #888;
+}
+
+header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  text-align: right;
+  padding: 0;
+  box-sizing: border-box;
+  background-color: #202020;
+  /* 深色标题栏，类似于图片中的样式 */
+  display: flex;
+  justify-content: flex-end;
+  /* 按钮向右对齐 */
+  height: 30px;
+  /* 标题栏高度 */
+}
+
+header button {
+  all: unset;
+  border-radius: 0;
+  /* 方形按钮 */
+  width: 46px;
+  /* 按钮宽度 */
+  height: 30px;
+  /* 按钮高度 */
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  outline: none;
+  /* 移除点击时的轮廓 */
+  -webkit-user-select: none;
+  /* Safari */
+  user-select: none;
+  /* 防止文本被选中 */
+}
+
+header button:focus {
+  outline: none;
+  /* 确保焦点状态下也没有轮廓 */
+}
+
+/* 最小化按钮 */
+#minimize {
+  background-color: transparent;
+}
+
+#minimize:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+#minimize::before {
+  content: "";
+  width: 12px;
+  height: 1px;
+  background-color: white;
+  display: block;
+  position: absolute;
+  top: 50%;
+}
+
+/* 最大化按钮 */
+#maximize {
+  background-color: transparent;
+}
+
+#maximize:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+#maximize::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border: 1px solid white;
+  display: block;
+}
+
+/* 关闭按钮 */
+#close {
+  background-color: transparent;
+  /* 默认红色背景，与图片一致 */
+}
+
+#close:hover {
+  background-color: #f13e3e;
+  /* 鼠标悬浮时变为更亮的红色 */
+}
+
+#close::before,
+#close::after {
+  content: "";
+  position: absolute;
+  width: 12px;
+  height: 1px;
+  background-color: white;
+}
+
+#close::before {
+  transform: rotate(45deg);
+}
+
+#close::after {
+  transform: rotate(-45deg);
 }

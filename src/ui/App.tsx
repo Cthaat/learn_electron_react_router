@@ -47,6 +47,11 @@ function App() {
 
   return (
     <div className="App">
+      <header>
+        <button id="minimize" aria-label="Minimize"></button>
+        <button id="maximize" aria-label="Maximize"></button>
+        <button id="close" aria-label="Close"></button>
+      </header>
       <div style={{ height: 120 }}>
         <Chart data={activeUsage} />
       </div>
