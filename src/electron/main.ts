@@ -1,9 +1,12 @@
-import { app, BrowserWindow, Tray } from "electron";
+import { app, BrowserWindow, Menu, Tray } from "electron";
 import { ipcMainHandle, isDev } from "./util.js";
 import { getStaticData, pollResources } from "./resourceManager.js";
 import { getPreloadPath, getUIPath } from "./pathResolver.js";
 import { create } from "domain";
 import { createTray } from "./tray.js";
+import { createMenu } from "./menu.js";
+
+Menu.setApplicationMenu(null);
 
 app.on("ready", () => {
   const mainWindow = new BrowserWindow({
@@ -26,6 +29,8 @@ app.on("ready", () => {
   createTray(mainWindow);
 
   handleCloseEvent(mainWindow);
+
+  createMenu(mainWindow);
 });
 
 function handleCloseEvent(mainWindow: BrowserWindow) {
