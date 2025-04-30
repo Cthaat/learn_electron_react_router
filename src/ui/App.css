@@ -59,6 +59,7 @@ header {
   /* 按钮向右对齐 */
   height: 30px;
   /* 标题栏高度 */
+  -webkit-app-region: drag;
 }
 
 header button {
@@ -80,6 +81,7 @@ header button {
   /* Safari */
   user-select: none;
   /* 防止文本被选中 */
+  -webkit-app-region: no-drag;
 }
 
 header button:focus {
