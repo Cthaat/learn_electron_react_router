@@ -85,7 +85,7 @@ jobs:
             echo "asset_path=./dist/vite-project-${{ steps.get-version.outputs.version }}.dmg" >> "$GITHUB_OUTPUT"
             echo "asset_name=vite-project-mac.dmg" >> "$GITHUB_OUTPUT"
           elif [ "${{ matrix.os }}" = "windows-latest" ]; then
-            echo "assets=./dist/vite-project-${{ steps.get-version.outputs.version }}.exe#vite-project-win-portable.exe,./dist/vite-project-${{ steps.get-version.outputs.version }}.msi#vite-project-win-installer.msi" >> "$GITHUB_OUTPUT"
+            echo "assets=./dist/vite-project ${{ steps.get-version.outputs.version }}.exe#vite-project-win-portable.exe,./dist/vite-project ${{ steps.get-version.outputs.version }}.msi#vite-project-win-installer.msi" >> "$GITHUB_OUTPUT"
           elif [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
             echo "asset_path=./dist/vite-project-${{ steps.get-version.outputs.version }}.AppImage" >> "$GITHUB_OUTPUT"
             echo "asset_name=vite-project-linux.AppImage" >> "$GITHUB_OUTPUT"
@@ -118,8 +118,8 @@ jobs:
         if: matrix.os == 'windows-latest'
         with:
           files: |
-            ./dist/vite-project-${{ steps.get-version.outputs.version }}.exe
-            ./dist/vite-project-${{ steps.get-version.outputs.version }}.msi
+            ./dist/vite-project ${{ steps.get-version.outputs.version }}.exe
+            ./dist/vite-project ${{ steps.get-version.outputs.version }}.msi
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           name: Release ${{ github.ref_name }}
           draft: false
