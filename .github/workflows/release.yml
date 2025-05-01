@@ -18,7 +18,7 @@ jobs:
         id: create-release
         uses: actions/create-release@v1
         env:
-          PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
@@ -73,10 +73,10 @@ jobs:
         if: matrix.os == 'macos-latest'
         uses: actions/upload-release-asset@v1
         env:
-          PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         with:
           upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: ./dist/vite-project-0.0.0.dmg
+          asset_path: ./dist/vite-project-1.0.0.dmg
           asset_name: vite-project-mac.dmg
           asset_content_type: application/octet-stream
 
@@ -84,10 +84,10 @@ jobs:
         if: matrix.os == 'windows-latest'
         uses: actions/upload-release-asset@v1
         env:
-          PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         with:
           upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: ./dist/vite-project-0.0.0.exe
+          asset_path: ./dist/vite-project-1.0.0.exe
           asset_name: vite-project-win-portable.exe
           asset_content_type: application/octet-stream
 
@@ -95,10 +95,10 @@ jobs:
         if: matrix.os == 'windows-latest'
         uses: actions/upload-release-asset@v1
         env:
-          PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         with:
           upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: ./dist/vite-project-0.0.0.msi
+          asset_path: ./dist/vite-project-1.0.0.msi
           asset_name: vite-project-win-installer.msi
           asset_content_type: application/octet-stream
 
@@ -106,9 +106,9 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-release-asset@v1
         env:
-          PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         with:
           upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: ./dist/vite-project-0.0.0.AppImage
+          asset_path: ./dist/vite-project-1.0.0.AppImage
           asset_name: vite-project-linux.AppImage
           asset_content_type: application/octet-stream
