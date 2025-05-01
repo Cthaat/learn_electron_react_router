@@ -30,6 +30,7 @@ jobs:
           VERSION=$(cat package.json | grep -o '"version": *"[^"]*"' | cut -d'"' -f4)
           echo "Package version: $VERSION"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+        shell: bash
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
@@ -38,6 +39,7 @@ jobs:
         run: |
           echo "Package.json version:"
           cat package.json | grep version
+        shell: bash
 
       # macOS构建
       - name: Build macOS App
@@ -60,10 +62,20 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
-      - name: List dist directory
+      # 列出dist目录内容 - 使用跨平台命令
+      - name: List dist directory (Unix)
+        if: matrix.os != 'windows-latest'
         run: |
           echo "Dist directory contents:"
           ls -la dist/
+        shell: bash
+
+      - name: List dist directory (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          echo "Dist directory contents:"
+          Get-ChildItem -Path dist/ -Force
+        shell: pwsh
 
       # 准备发布资产的路径
       - name: Prepare asset paths
