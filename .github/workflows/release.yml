@@ -18,7 +18,7 @@ jobs:
         id: create-release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
@@ -52,28 +52,28 @@ jobs:
         if: matrix.os == 'macos-latest'
         run: yarn dist:mac
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
       # Windows构建
       - name: Build Windows App
         if: matrix.os == 'windows-latest'
         run: yarn dist:win
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
       # Linux构建
       - name: Build Linux App
         if: matrix.os == 'ubuntu-latest'
         run: yarn dist:linux
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
       # 上传构建产物到GitHub发布
       - name: Upload Release Assets (macOS)
         if: matrix.os == 'macos-latest'
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         with:
           upload_url: ${{ needs.create-release.outputs.upload_url }}
           asset_path: ./dist/vite-project-0.0.0.dmg
@@ -84,7 +84,7 @@ jobs:
         if: matrix.os == 'windows-latest'
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         with:
           upload_url: ${{ needs.create-release.outputs.upload_url }}
           asset_path: ./dist/vite-project-0.0.0.exe
@@ -95,7 +95,7 @@ jobs:
         if: matrix.os == 'windows-latest'
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         with:
           upload_url: ${{ needs.create-release.outputs.upload_url }}
           asset_path: ./dist/vite-project-0.0.0.msi
@@ -106,7 +106,7 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         with:
           upload_url: ${{ needs.create-release.outputs.upload_url }}
           asset_path: ./dist/vite-project-0.0.0.AppImage
