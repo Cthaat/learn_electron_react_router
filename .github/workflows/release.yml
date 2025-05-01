@@ -20,7 +20,7 @@ jobs:
 
       - name: Get Version from package.json
         id: get-version
-        run: echo "version=$(node -p \"require('./package.json').version\")" >> $GITHUB_OUTPUT
+        run: echo "version=$(node -p 'require(\"./package.json\").version')" >> $GITHUB_OUTPUT
 
       - name: Create Release
         id: create-release
