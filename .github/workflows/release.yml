@@ -12,8 +12,16 @@ jobs:
     outputs:
       release_id: ${{ steps.create-release.outputs.id }}
       upload_url: ${{ steps.create-release.outputs.upload_url }}
+      version: ${{ steps.get-version.outputs.version }}
 
     steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v4
+
+      - name: Get Version from package.json
+        id: get-version
+        run: echo "version=$(node -p \"require('./package.json').version\")" >> $GITHUB_OUTPUT
+
       - name: Create Release
         id: create-release
         uses: actions/create-release@v1
@@ -47,6 +55,11 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
+      - name: Print package.json version
+        run: |
+          echo "Package.json version:"
+          cat package.json | grep version
+
       # macOS构建
       - name: Build macOS App
         if: matrix.os == 'macos-latest'
@@ -68,6 +81,11 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
+      - name: List dist directory
+        run: |
+          echo "Dist directory contents:"
+          ls -la dist/
+
       # 上传构建产物到GitHub发布
       - name: Upload Release Assets (macOS)
         if: matrix.os == 'macos-latest'
@@ -76,7 +94,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         with:
           upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: ./dist/vite-project-1.0.0.dmg
+          asset_path: ./dist/vite-project-${{ needs.create-release.outputs.version }}.dmg
           asset_name: vite-project-mac.dmg
           asset_content_type: application/octet-stream
 
@@ -87,7 +105,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         with:
           upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: ./dist/vite-project-1.0.0.exe
+          asset_path: ./dist/vite-project-${{ needs.create-release.outputs.version }}.exe
           asset_name: vite-project-win-portable.exe
           asset_content_type: application/octet-stream
 
@@ -98,7 +116,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         with:
           upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: ./dist/vite-project-1.0.0.msi
+          asset_path: ./dist/vite-project-${{ needs.create-release.outputs.version }}.msi
           asset_name: vite-project-win-installer.msi
           asset_content_type: application/octet-stream
 
@@ -109,6 +127,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         with:
           upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: ./dist/vite-project-1.0.0.AppImage
+          asset_path: ./dist/vite-project-${{ needs.create-release.outputs.version }}.AppImage
           asset_name: vite-project-linux.AppImage
           asset_content_type: application/octet-stream
