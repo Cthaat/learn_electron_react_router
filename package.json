@@ -19,7 +19,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "transpile:electron": "tsc --project src/electron/tsconfig.json",
-    "dist:mac": "yarn run transpile:electron && yarn run build && electron-builder --mac --arm64",
+    "dist:mac": "yarn run transpile:electron && yarn run build && electron-builder --mac --x64 --arm64",
     "dist:win": "yarn run transpile:electron && yarn run build && electron-builder --win --x64",
     "dist:linux": "yarn run transpile:electron && yarn run build && electron-builder --linux --x64"
   },
