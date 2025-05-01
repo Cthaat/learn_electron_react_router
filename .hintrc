@@ -10,7 +10,8 @@
       {
         "ignore": [
           "-webkit-app-region",
-          "scrollbar-width"
+          "scrollbar-width",
+          "scrollbar-width: none"
         ]
       }
     ]
