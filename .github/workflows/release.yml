@@ -6,39 +6,8 @@ on:
       - "v*"
 
 jobs:
-  create-release:
-    name: Create Release
-    runs-on: ubuntu-latest
-    outputs:
-      release_id: ${{ steps.create-release.outputs.id }}
-      upload_url: ${{ steps.create-release.outputs.upload_url }}
-      version: ${{ steps.get-version.outputs.version }}
-
-    steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v4
-
-      - name: Get Version from package.json
-        id: get-version
-        run: |
-          VERSION=$(cat package.json | grep -o '"version": *"[^"]*"' | cut -d'"' -f4)
-          echo "Package version: $VERSION"
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-
-      - name: Create Release
-        id: create-release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          draft: false
-          prerelease: false
-
   build:
     name: Build (${{ matrix.os }})
-    needs: create-release
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -54,6 +23,13 @@ jobs:
         with:
           node-version: 20
           cache: "yarn"
+
+      - name: Get Version from package.json
+        id: get-version
+        run: |
+          VERSION=$(cat package.json | grep -o '"version": *"[^"]*"' | cut -d'"' -f4)
+          echo "Package version: $VERSION"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
@@ -89,47 +65,50 @@ jobs:
           echo "Dist directory contents:"
           ls -la dist/
 
-      # 上传构建产物到GitHub发布
+      # 准备发布资产的路径
+      - name: Prepare asset paths
+        id: prepare-assets
+        run: |
+          if [ "${{ matrix.os }}" = "macos-latest" ]; then
+            echo "asset_path=./dist/vite-project-${{ steps.get-version.outputs.version }}.dmg" >> "$GITHUB_OUTPUT"
+            echo "asset_name=vite-project-mac.dmg" >> "$GITHUB_OUTPUT"
+          elif [ "${{ matrix.os }}" = "windows-latest" ]; then
+            echo "assets=./dist/vite-project-${{ steps.get-version.outputs.version }}.exe#vite-project-win-portable.exe,./dist/vite-project-${{ steps.get-version.outputs.version }}.msi#vite-project-win-installer.msi" >> "$GITHUB_OUTPUT"
+          elif [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
+            echo "asset_path=./dist/vite-project-${{ steps.get-version.outputs.version }}.AppImage" >> "$GITHUB_OUTPUT"
+            echo "asset_name=vite-project-linux.AppImage" >> "$GITHUB_OUTPUT"
+          fi
+        shell: bash
+
+      # 使用更现代的GitHub Release操作
       - name: Upload Release Assets (macOS)
+        uses: softprops/action-gh-release@v1
         if: matrix.os == 'macos-latest'
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         with:
-          upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: ./dist/vite-project-${{ needs.create-release.outputs.version }}.dmg
-          asset_name: vite-project-mac.dmg
-          asset_content_type: application/octet-stream
-
-      - name: Upload Release Assets (Windows - Portable)
-        if: matrix.os == 'windows-latest'
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-        with:
-          upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: ./dist/vite-project-${{ needs.create-release.outputs.version }}.exe
-          asset_name: vite-project-win-portable.exe
-          asset_content_type: application/octet-stream
-
-      - name: Upload Release Assets (Windows - MSI)
-        if: matrix.os == 'windows-latest'
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-        with:
-          upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: ./dist/vite-project-${{ needs.create-release.outputs.version }}.msi
-          asset_name: vite-project-win-installer.msi
-          asset_content_type: application/octet-stream
+          files: ${{ steps.prepare-assets.outputs.asset_path }}
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          name: Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false
 
       - name: Upload Release Assets (Linux)
+        uses: softprops/action-gh-release@v1
         if: matrix.os == 'ubuntu-latest'
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         with:
-          upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: ./dist/vite-project-${{ needs.create-release.outputs.version }}.AppImage
-          asset_name: vite-project-linux.AppImage
-          asset_content_type: application/octet-stream
+          files: ${{ steps.prepare-assets.outputs.asset_path }}
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          name: Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Assets (Windows)
+        uses: softprops/action-gh-release@v1
+        if: matrix.os == 'windows-latest'
+        with:
+          files: |
+            ./dist/vite-project-${{ steps.get-version.outputs.version }}.exe
+            ./dist/vite-project-${{ steps.get-version.outputs.version }}.msi
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          name: Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false
