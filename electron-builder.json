@@ -1,5 +1,5 @@
 {
-  "productName": "系统资源监控器",
+  "productName": "System Resource Monitor",
   "appId": "com.yourdomain.sysmonitor",
   "copyright": "Copyright © 2025 Your Company",
   "icon": "./public/icon.png",
@@ -17,7 +17,7 @@
   ],
   "protocols": [
     {
-      "name": "系统资源监控器",
+      "name": "System Resource Monitor",
       "schemes": [
         "sysmonitor"
       ]
@@ -88,7 +88,7 @@
     "installerHeaderIcon": "./public/icon.ico",
     "createDesktopShortcut": true,
     "createStartMenuShortcut": true,
-    "shortcutName": "系统资源监控器",
+    "shortcutName": "System Resource Monitor",
     "license": "LICENSE.txt"
   },
   "linux": {
