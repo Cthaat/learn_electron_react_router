@@ -1,0 +1,114 @@
+name: Release Electron App
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  create-release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    outputs:
+      release_id: ${{ steps.create-release.outputs.id }}
+      upload_url: ${{ steps.create-release.outputs.upload_url }}
+
+    steps:
+      - name: Create Release
+        id: create-release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+  build:
+    name: Build (${{ matrix.os }})
+    needs: create-release
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: "yarn"
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      # macOS构建
+      - name: Build macOS App
+        if: matrix.os == 'macos-latest'
+        run: yarn dist:mac
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Windows构建
+      - name: Build Windows App
+        if: matrix.os == 'windows-latest'
+        run: yarn dist:win
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Linux构建
+      - name: Build Linux App
+        if: matrix.os == 'ubuntu-latest'
+        run: yarn dist:linux
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # 上传构建产物到GitHub发布
+      - name: Upload Release Assets (macOS)
+        if: matrix.os == 'macos-latest'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: ./dist/vite-project-0.0.0.dmg
+          asset_name: vite-project-mac.dmg
+          asset_content_type: application/octet-stream
+
+      - name: Upload Release Assets (Windows - Portable)
+        if: matrix.os == 'windows-latest'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: ./dist/vite-project-0.0.0.exe
+          asset_name: vite-project-win-portable.exe
+          asset_content_type: application/octet-stream
+
+      - name: Upload Release Assets (Windows - MSI)
+        if: matrix.os == 'windows-latest'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: ./dist/vite-project-0.0.0.msi
+          asset_name: vite-project-win-installer.msi
+          asset_content_type: application/octet-stream
+
+      - name: Upload Release Assets (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: ./dist/vite-project-0.0.0.AppImage
+          asset_name: vite-project-linux.AppImage
+          asset_content_type: application/octet-stream

@@ -19,7 +19,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "transpile:electron": "tsc --project src/electron/tsconfig.json",
-    "dist:mac": "yarn run transpile:electron && yarn run build && electron-builder --mac --arm64",
+    "dist:mac": "yarn run transpile:electron && yarn run build && electron-builder --mac --x64 --arm64",
     "dist:win": "yarn run transpile:electron && yarn run build && electron-builder --win --x64",
     "dist:linux": "yarn run transpile:electron && yarn run build && electron-builder --linux --x64"
   },
@@ -27,7 +27,8 @@
     "npm-run-all": "^4.1.5",
     "os-utils": "^0.0.14",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.5.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",

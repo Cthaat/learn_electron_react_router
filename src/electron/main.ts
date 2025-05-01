@@ -9,6 +9,8 @@ Menu.setApplicationMenu(null);
 
 app.on("ready", () => {
   const mainWindow = new BrowserWindow({
+    width: 1200,
+    height: 800,
     webPreferences: {
       preload: getPreloadPath(),
     },

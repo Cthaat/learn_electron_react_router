@@ -9,7 +9,9 @@
       "default",
       {
         "ignore": [
-          "-webkit-app-region"
+          "-webkit-app-region",
+          "scrollbar-width",
+          "scrollbar-width: none"
         ]
       }
     ]
