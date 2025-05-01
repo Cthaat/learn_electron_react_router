@@ -22,8 +22,8 @@ jobs:
         id: get-version
         run: |
           VERSION=$(cat package.json | grep -o '"version": *"[^"]*"' | cut -d'"' -f4)
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Package version: $VERSION"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Create Release
         id: create-release
