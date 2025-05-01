@@ -13,8 +13,16 @@
     "target": "dmg"
   },
   "linux": {
-    "target": "AppImage",
-    "category": "Utility"
+    "target": [
+      "AppImage",
+      "deb",
+      "rpm",
+      "snap",
+      "tar.gz"
+    ],
+    "category": "Utility",
+    "synopsis": "系统资源监控工具",
+    "description": "基于Electron + React实现的系统资源监控应用，用于监控CPU、内存和存储使用情况"
   },
   "win": {
     "target": [
