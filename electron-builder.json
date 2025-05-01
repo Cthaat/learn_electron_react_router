@@ -155,7 +155,7 @@
       "ext": "sysm",
       "name": "System Monitor File",
       "description": "系统监控器数据文件",
-      "icon": "./public/sysm-icon.ico",
+      "icon": "./public/icon.ico",
       "role": "Editor"
     }
   ]
