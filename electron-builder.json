@@ -33,14 +33,9 @@
     "icon": "./public/icon.png",
     "hardenedRuntime": true,
     "gatekeeperAssess": false,
-    "entitlements": "build/entitlements.mac.plist",
-    "entitlementsInherit": "build/entitlements.mac.plist",
-    "binaries": [],
-    "extraFiles": [],
     "artifactName": "${productName}-${version}-${arch}.${ext}"
   },
   "dmg": {
-    "background": "public/dmg-background.png",
     "icon": "./public/icon.png",
     "iconSize": 100,
     "window": {
@@ -82,8 +77,6 @@
       }
     ],
     "icon": "./public/icon.ico",
-    "publisherName": "Your Company, Inc.",
-    "verifyUpdateCodeSignature": false,
     "artifactName": "${productName}-${version}-${arch}.${ext}"
   },
   "nsis": {
@@ -96,8 +89,7 @@
     "createDesktopShortcut": true,
     "createStartMenuShortcut": true,
     "shortcutName": "系统资源监控器",
-    "license": "LICENSE.txt",
-    "include": "build/installer.nsh"
+    "license": "LICENSE.txt"
   },
   "linux": {
     "target": [
@@ -120,9 +112,7 @@
       "libnotify4",
       "libxtst6",
       "libnss3"
-    ],
-    "afterInstall": "build/debian/postinst",
-    "afterRemove": "build/debian/postrm"
+    ]
   },
   "rpm": {
     "depends": [
@@ -137,9 +127,6 @@
     "confinement": "strict",
     "grade": "stable",
     "summary": "系统资源监控工具",
-    "assumes": [
-      "snapd2.55"
-    ],
     "plugs": [
       "default",
       "home",
@@ -156,14 +143,6 @@
       "opengl"
     ]
   },
-  "appx": {
-    "applicationId": "YourCompany.SysMonitor",
-    "backgroundColor": "#464646",
-    "displayName": "系统资源监控器",
-    "identityName": "YourCompany.SysMonitor",
-    "publisher": "CN=Your Company, O=Your Company, L=Your City, S=Your State, C=Your Country",
-    "publisherDisplayName": "Your Company"
-  },
   "publish": [
     {
       "provider": "github",
@@ -171,12 +150,6 @@
       "repo": "sysmonitor"
     }
   ],
-  "generateUpdatesFilesForAllChannels": true,
-  "releaseInfo": {
-    "releaseNotes": "请查看 CHANGELOG.md 了解更新详情"
-  },
-  "afterPack": "./build/afterPack.js",
-  "afterSign": "./build/afterSign.js",
   "fileAssociations": [
     {
       "ext": "sysm",
