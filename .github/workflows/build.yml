@@ -1,65 +1,99 @@
+# 工作流名称：构建Electron应用程序
+# 这个名称会显示在GitHub Actions界面中
 name: Build Electron App
+
+# 触发条件：定义何时自动运行这个工作流
 on:
+  # 当代码推送到main或master分支时触发
   push:
     branches: [main, master]
+  # 当有人创建针对main或master分支的Pull Request时触发
   pull_request:
     branches: [main, master]
-  # 允许手动触发工作流
+  # 允许在GitHub界面上手动触发这个工作流
   workflow_dispatch:
 
+# 工作流中的工作定义
 jobs:
+  # 定义一个名为"build"的工作
   build:
+    # 工作的显示名称，包含运行的操作系统信息
     name: Build (${{ matrix.os }})
+    # 指定此工作在哪个操作系统上运行
     runs-on: ${{ matrix.os }}
+    # 策略配置，用于设置矩阵构建
     strategy:
+      # 如果一个操作系统的构建失败，其他操作系统的构建仍然继续
       fail-fast: false
+      # 矩阵定义：在3种操作系统上并行构建
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
 
+    # 工作中的步骤列表
     steps:
+      # 步骤1: 检出代码库
+      # 这一步会将你的GitHub仓库代码下载到Action运行的虚拟机上
       - name: Check out Git repository
         uses: actions/checkout@v4
 
+      # 步骤2: 设置Node.js环境
+      # 安装指定版本的Node.js并配置缓存提高效率
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
+          # 使用Node.js 20版本
           node-version: 20
+          # 启用yarn包管理器的缓存
           cache: "yarn"
 
+      # 步骤3: 安装项目依赖
+      # 使用yarn包管理器安装项目所需的所有依赖
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      # macOS构建
+      # 步骤4: 构建macOS版本应用
+      # 仅在macOS操作系统上运行
       - name: Build macOS App
         if: matrix.os == 'macos-latest'
+        # 执行在package.json中定义的dist:mac脚本
         run: yarn dist:mac
+        # 设置环境变量，提供GitHub令牌用于授权
         env:
           GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
-      # Windows构建
+      # 步骤5: 构建Windows版本应用
+      # 仅在Windows操作系统上运行
       - name: Build Windows App
         if: matrix.os == 'windows-latest'
+        # 执行在package.json中定义的dist:win脚本
         run: yarn dist:win
         env:
           GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
-      # Linux构建
+      # 步骤6: 构建Linux版本应用
+      # 仅在Linux操作系统上运行
       - name: Build Linux App
         if: matrix.os == 'ubuntu-latest'
+        # 执行在package.json中定义的dist:linux脚本
         run: yarn dist:linux
         env:
           GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
-      # 上传构建产物
+      # 步骤7: 上传构建产物
+      # 这一步将构建好的应用文件保存为GitHub Action的"产物"
+      # 你可以在GitHub Actions界面的工作流运行记录中下载这些文件
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
+          # 构建产物的名称，使用操作系统名称作为前缀
           name: ${{ matrix.os }}-artifacts
+          # 指定要上传哪些文件路径，支持通配符
           path: |
-            dist/*.dmg
-            dist/*.exe
-            dist/*.AppImage
-            dist/*.msi
-            dist/*.deb
-            dist/*.rpm
+            dist/*.dmg  # macOS磁盘镜像文件
+            dist/*.exe  # Windows可执行文件
+            dist/*.AppImage  # Linux AppImage应用文件
+            dist/*.msi  # Windows安装包
+            dist/*.deb  # Debian/Ubuntu安装包
+            dist/*.rpm  # Red Hat/Fedora安装包
+          # 如果没找到匹配的文件，不报错继续执行
           if-no-files-found: ignore

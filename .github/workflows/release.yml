@@ -1,68 +1,103 @@
+# 工作流名称：发布Electron应用程序
+# 这个工作流负责创建正式发布版本并上传到GitHub Releases
 name: Release Electron App
 
+# 触发条件：仅当推送标签(tag)时触发
+# 标签必须以"v"开头，如v1.0.0、v0.1.0等
 on:
   push:
     tags:
       - "v*"
 
+# 工作流中的工作定义
 jobs:
+  # 定义一个名为"build"的工作
   build:
+    # 工作的显示名称，包含运行的操作系统信息
     name: Build (${{ matrix.os }})
+    # 指定此工作在哪个操作系统上运行
     runs-on: ${{ matrix.os }}
+    # 策略配置，用于设置矩阵构建
     strategy:
+      # 如果一个操作系统的构建失败，其他操作系统的构建仍然继续
       fail-fast: false
+      # 矩阵定义：在3种操作系统上并行构建
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
 
+    # 工作中的步骤列表
     steps:
+      # 步骤1: 检出代码库
+      # 这一步会将你的GitHub仓库代码下载到Action运行的虚拟机上
       - name: Check out Git repository
         uses: actions/checkout@v4
 
+      # 步骤2: 设置Node.js环境
+      # 安装指定版本的Node.js并配置缓存提高效率
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
+          # 使用Node.js 20版本
           node-version: 20
+          # 启用yarn包管理器的缓存
           cache: "yarn"
 
+      # 步骤3: 从package.json文件提取版本号
+      # 这一步很重要，它读取你项目中的版本信息，用于后续文件命名
       - name: Get Version from package.json
-        id: get-version
+        id: get-version # 设置步骤ID，便于后续步骤引用这一步的输出
         run: |
+          # 使用grep和cut命令从package.json中提取版本号
           VERSION=$(cat package.json | grep -o '"version": *"[^"]*"' | cut -d'"' -f4)
+          # 打印版本号（用于调试）
           echo "Package version: $VERSION"
+          # 将版本号保存为此步骤的输出变量
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+        # 指定使用bash shell执行命令，确保跨平台兼容性
         shell: bash
 
+      # 步骤4: 安装项目依赖
+      # 使用yarn包管理器安装项目所需的所有依赖
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
+      # 步骤5: 打印package.json中的版本信息（调试用）
       - name: Print package.json version
         run: |
           echo "Package.json version:"
           cat package.json | grep version
         shell: bash
 
-      # macOS构建
+      # 步骤6: 构建macOS版本应用
+      # 仅在macOS操作系统上运行
       - name: Build macOS App
         if: matrix.os == 'macos-latest'
+        # 执行在package.json中定义的dist:mac脚本
         run: yarn dist:mac
+        # 设置环境变量，提供GitHub令牌用于授权
         env:
           GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
-      # Windows构建
+      # 步骤7: 构建Windows版本应用
+      # 仅在Windows操作系统上运行
       - name: Build Windows App
         if: matrix.os == 'windows-latest'
+        # 执行在package.json中定义的dist:win脚本
         run: yarn dist:win
         env:
           GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
-      # Linux构建
+      # 步骤8: 构建Linux版本应用
+      # 仅在Linux操作系统上运行
       - name: Build Linux App
         if: matrix.os == 'ubuntu-latest'
+        # 执行在package.json中定义的dist:linux脚本
         run: yarn dist:linux
         env:
           GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
-      # 列出dist目录内容 - 使用跨平台命令
+      # 步骤9: 列出构建产物目录内容（Unix系统）
+      # 这是调试用的步骤，帮助你查看生成了哪些文件
       - name: List dist directory (Unix)
         if: matrix.os != 'windows-latest'
         run: |
@@ -70,6 +105,8 @@ jobs:
           ls -la dist/
         shell: bash
 
+      # 步骤10: 列出构建产物目录内容（Windows系统）
+      # Windows使用不同的命令列出文件
       - name: List dist directory (Windows)
         if: matrix.os == 'windows-latest'
         run: |
@@ -77,32 +114,44 @@ jobs:
           Get-ChildItem -Path dist/ -Force
         shell: pwsh
 
-      # 准备发布资产的路径
+      # 步骤11: 准备发布资产的路径
+      # 根据不同操作系统，构建不同的文件路径
       - name: Prepare asset paths
-        id: prepare-assets
+        id: prepare-assets # 设置步骤ID，便于后续步骤引用
         run: |
+          # 根据操作系统不同，设置不同的文件路径
           if [ "${{ matrix.os }}" = "macos-latest" ]; then
+            # macOS文件路径
             echo "asset_path=./dist/vite-project-${{ steps.get-version.outputs.version }}.dmg" >> "$GITHUB_OUTPUT"
             echo "asset_name=vite-project-mac.dmg" >> "$GITHUB_OUTPUT"
           elif [ "${{ matrix.os }}" = "windows-latest" ]; then
+            # Windows文件路径（注意Windows文件名中使用空格而不是连字符）
             echo "assets=./dist/vite-project ${{ steps.get-version.outputs.version }}.exe#vite-project-win-portable.exe,./dist/vite-project ${{ steps.get-version.outputs.version }}.msi#vite-project-win-installer.msi" >> "$GITHUB_OUTPUT"
           elif [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
+            # Linux文件路径
             echo "asset_path=./dist/vite-project-${{ steps.get-version.outputs.version }}.AppImage" >> "$GITHUB_OUTPUT"
             echo "asset_name=vite-project-linux.AppImage" >> "$GITHUB_OUTPUT"
           fi
         shell: bash
 
-      # 使用更现代的GitHub Release操作
+      # 步骤12: 上传macOS构建产物到GitHub Release
+      # 这一步将macOS应用添加到GitHub Releases页面
       - name: Upload Release Assets (macOS)
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v1 # 使用第三方操作来创建Release
         if: matrix.os == 'macos-latest'
         with:
+          # 要上传的文件路径
           files: ${{ steps.prepare-assets.outputs.asset_path }}
+          # GitHub访问令牌
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          # Release的名称
           name: Release ${{ github.ref_name }}
+          # 是否为草稿版本
           draft: false
+          # 是否为预发布版本
           prerelease: false
 
+      # 步骤13: 上传Linux构建产物到GitHub Release
       - name: Upload Release Assets (Linux)
         uses: softprops/action-gh-release@v1
         if: matrix.os == 'ubuntu-latest'
@@ -113,10 +162,12 @@ jobs:
           draft: false
           prerelease: false
 
+      # 步骤14: 上传Windows构建产物到GitHub Release
       - name: Upload Release Assets (Windows)
         uses: softprops/action-gh-release@v1
         if: matrix.os == 'windows-latest'
         with:
+          # 使用多行格式指定多个文件
           files: |
             ./dist/vite-project ${{ steps.get-version.outputs.version }}.exe
             ./dist/vite-project ${{ steps.get-version.outputs.version }}.msi
