@@ -8,17 +8,17 @@ export default function Dashboard() {
   const navigate = useNavigate();
 
   const cpuUsages = useMemo(
-    () => statistics.map((stat) => stat.cpuUsage),
+    () => statistics.map((stat) => stat.cpuUsage * 100),
     [statistics]
   );
 
   const ramUsage = useMemo(
-    () => statistics.map((stat) => stat.ramUsage),
+    () => statistics.map((stat) => stat.ramUsage * 100),
     [statistics]
   );
 
   const storageUsage = useMemo(
-    () => statistics.map((stat) => stat.storageUsage),
+    () => statistics.map((stat) => stat.storageUsage * 100),
     [statistics]
   );
 

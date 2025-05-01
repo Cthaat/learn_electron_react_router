@@ -27,7 +27,7 @@ export default function CpuView() {
   const { cpuModel } = useLoaderData() as CpuLoaderData;
 
   const cpuUsages = useMemo(
-    () => statistics.map((stat) => stat.cpuUsage),
+    () => statistics.map((stat) => stat.cpuUsage * 100),
     [statistics]
   );
 

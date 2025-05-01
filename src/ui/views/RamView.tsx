@@ -21,7 +21,7 @@ export default function RamView() {
   }, []);
 
   const ramUsages = useMemo(
-    () => statistics.map((stat) => stat.ramUsage),
+    () => statistics.map((stat) => stat.ramUsage * 100),
     [statistics]
   );
 

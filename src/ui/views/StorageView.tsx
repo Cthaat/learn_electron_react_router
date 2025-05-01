@@ -21,7 +21,7 @@ export default function StorageView() {
   }, []);
 
   const storageUsages = useMemo(
-    () => statistics.map((stat) => stat.storageUsage),
+    () => statistics.map((stat) => stat.storageUsage * 100),
     [statistics]
   );
 
