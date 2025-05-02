@@ -1,12 +1,6 @@
 {
-  "productName": "System Resource Monitor",
-  "appId": "com.yourdomain.sysmonitor",
-  "copyright": "Copyright © 2025 Your Company",
+  "appId": "com.n-ziermann.prepare",
   "icon": "./public/icon.png",
-  "directories": {
-    "output": "dist",
-    "buildResources": "public"
-  },
   "extraResources": [
     "dist_electron/preload.cjs",
     "public/**"
@@ -15,148 +9,17 @@
     "dist_electron",
     "dist_react"
   ],
-  "protocols": [
-    {
-      "name": "System Resource Monitor",
-      "schemes": [
-        "sysmonitor"
-      ]
-    }
-  ],
   "mac": {
-    "category": "public.app-category.utilities",
-    "target": [
-      "dmg",
-      "zip"
-    ],
-    "darkModeSupport": true,
-    "icon": "./public/icon.png",
-    "hardenedRuntime": true,
-    "gatekeeperAssess": false,
-    "artifactName": "${productName}-${version}-${arch}.${ext}"
+    "target": "dmg"
   },
-  "dmg": {
-    "icon": "./public/icon.png",
-    "iconSize": 100,
-    "window": {
-      "width": 540,
-      "height": 380
-    },
-    "contents": [
-      {
-        "x": 130,
-        "y": 220
-      },
-      {
-        "x": 410,
-        "y": 220,
-        "type": "link",
-        "path": "/Applications"
-      }
-    ]
+  "linux": {
+    "target": "AppImage",
+    "category": "Utility"
   },
   "win": {
     "target": [
-      {
-        "target": "portable",
-        "arch": [
-          "x64"
-        ]
-      },
-      {
-        "target": "msi",
-        "arch": [
-          "x64"
-        ]
-      },
-      {
-        "target": "nsis",
-        "arch": [
-          "x64"
-        ]
-      }
-    ],
-    "icon": "./public/icon.ico",
-    "artifactName": "${productName}-${version}-${arch}.${ext}"
-  },
-  "nsis": {
-    "oneClick": false,
-    "allowToChangeInstallationDirectory": true,
-    "perMachine": false,
-    "installerIcon": "./public/icon.ico",
-    "uninstallerIcon": "./public/icon.ico",
-    "installerHeaderIcon": "./public/icon.ico",
-    "createDesktopShortcut": true,
-    "createStartMenuShortcut": true,
-    "shortcutName": "System Resource Monitor",
-    "license": "LICENSE.txt"
-  },
-  "linux": {
-    "target": [
-      "AppImage",
-      "deb",
-      "rpm",
-      "snap",
-      "tar.gz"
-    ],
-    "category": "Utility",
-    "synopsis": "系统资源监控工具",
-    "description": "基于Electron + React实现的系统资源监控应用，用于监控CPU、内存和存储使用情况",
-    "icon": "./public/icon.png",
-    "maintainer": "Your Name <your.email@example.com>",
-    "vendor": "Your Company, Inc.",
-    "artifactName": "${productName}-${version}-${arch}.${ext}"
-  },
-  "deb": {
-    "depends": [
-      "libnotify4",
-      "libxtst6",
-      "libnss3"
+      "portable",
+      "msi"
     ]
-  },
-  "rpm": {
-    "depends": [
-      "libnotify",
-      "libXtst"
-    ],
-    "fpm": [
-      "--rpm-rpmbuild-define=_build_id_links none"
-    ]
-  },
-  "snap": {
-    "confinement": "strict",
-    "grade": "stable",
-    "summary": "系统资源监控工具",
-    "plugs": [
-      "default",
-      "home",
-      "desktop",
-      "desktop-legacy",
-      "wayland",
-      "x11",
-      "unity7",
-      "browser-support",
-      "network",
-      "gsettings",
-      "audio-playback",
-      "pulseaudio",
-      "opengl"
-    ]
-  },
-  "publish": [
-    {
-      "provider": "github",
-      "owner": "Cthaat",
-      "repo": "learn_electron_react_router"
-    }
-  ],
-  "fileAssociations": [
-    {
-      "ext": "sysm",
-      "name": "System Monitor File",
-      "description": "系统监控器数据文件",
-      "icon": "./public/icon.ico",
-      "role": "Editor"
-    }
-  ]
+  }
 }
