@@ -31,7 +31,7 @@
     ],
     "darkModeSupport": true,
     "icon": "./public/icon.png",
-    "hardenedRuntime": false,
+    "hardenedRuntime": true,
     "gatekeeperAssess": false,
     "artifactName": "${productName}-${version}-${arch}.${ext}"
   },

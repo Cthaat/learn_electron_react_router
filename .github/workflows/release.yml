@@ -42,7 +42,39 @@ jobs:
           # 启用yarn包管理器的缓存
           cache: "yarn"
 
-      # 步骤3: 从package.json文件提取版本号
+      # 步骤3: 清理之前的构建产物
+      # 防止因为构建目录存在而导致的错误
+      - name: Clean build directory
+        run: |
+          rm -rf dist || true
+          mkdir -p dist
+        shell: bash
+
+      # 步骤4: 为macOS准备图标文件
+      # 在macOS环境下将PNG图标转换为ICNS格式
+      - name: Prepare macOS icon
+        if: matrix.os == 'macos-latest'
+        run: |
+          echo "正在生成macOS图标文件..."
+          # 创建iconset目录
+          mkdir -p IconSet.iconset
+          # 从PNG生成不同尺寸的图标
+          sips -z 16 16 public/icon.png --out IconSet.iconset/icon_16x16.png
+          sips -z 32 32 public/icon.png --out IconSet.iconset/icon_16x16@2x.png
+          sips -z 32 32 public/icon.png --out IconSet.iconset/icon_32x32.png
+          sips -z 64 64 public/icon.png --out IconSet.iconset/icon_32x32@2x.png
+          sips -z 128 128 public/icon.png --out IconSet.iconset/icon_128x128.png
+          sips -z 256 256 public/icon.png --out IconSet.iconset/icon_128x128@2x.png
+          sips -z 256 256 public/icon.png --out IconSet.iconset/icon_256x256.png
+          sips -z 512 512 public/icon.png --out IconSet.iconset/icon_256x256@2x.png
+          sips -z 512 512 public/icon.png --out IconSet.iconset/icon_512x512.png
+          sips -z 1024 1024 public/icon.png --out IconSet.iconset/icon_512x512@2x.png
+          # 生成icns文件
+          iconutil -c icns IconSet.iconset -o public/icon.icns
+          echo "ICNS图标文件已生成在 public/icon.icns"
+        shell: bash
+
+      # 步骤5: 从package.json文件提取版本号
       # 这一步很重要，它读取你项目中的版本信息，用于后续文件命名
       - name: Get Version from package.json
         id: get-version # 设置步骤ID，便于后续步骤引用这一步的输出
@@ -56,19 +88,19 @@ jobs:
         # 指定使用bash shell执行命令，确保跨平台兼容性
         shell: bash
 
-      # 步骤4: 安装项目依赖
+      # 步骤6: 安装项目依赖
       # 使用yarn包管理器安装项目所需的所有依赖
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      # 步骤5: 打印package.json中的版本信息（调试用）
+      # 步骤7: 打印package.json中的版本信息（调试用）
       - name: Print package.json version
         run: |
           echo "Package.json version:"
           cat package.json | grep version
         shell: bash
 
-      # 步骤6: 构建macOS版本应用
+      # 步骤8: 构建macOS版本应用
       # 仅在macOS操作系统上运行
       - name: Build macOS App
         if: matrix.os == 'macos-latest'
@@ -78,7 +110,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
-      # 步骤7: 构建Windows版本应用
+      # 步骤9: 构建Windows版本应用
       # 仅在Windows操作系统上运行
       - name: Build Windows App
         if: matrix.os == 'windows-latest'
@@ -87,7 +119,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
-      # 步骤8: 构建Linux版本应用
+      # 步骤10: 构建Linux版本应用
       # 仅在Linux操作系统上运行
       - name: Build Linux App
         if: matrix.os == 'ubuntu-latest'
@@ -96,7 +128,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
-      # 步骤9: 列出构建产物目录内容（Unix系统）
+      # 步骤11: 列出构建产物目录内容（Unix系统）
       # 这是调试用的步骤，帮助你查看生成了哪些文件
       - name: List dist directory (Unix)
         if: matrix.os != 'windows-latest'
@@ -105,7 +137,7 @@ jobs:
           ls -la dist/
         shell: bash
 
-      # 步骤10: 列出构建产物目录内容（Windows系统）
+      # 步骤12: 列出构建产物目录内容（Windows系统）
       # Windows使用不同的命令列出文件
       - name: List dist directory (Windows)
         if: matrix.os == 'windows-latest'
@@ -114,7 +146,7 @@ jobs:
           Get-ChildItem -Path dist/ -Force
         shell: pwsh
 
-      # 步骤11: 准备发布资产的路径
+      # 步骤13: 准备发布资产的路径
       # 根据不同操作系统，构建不同的文件路径
       - name: Prepare asset paths
         id: prepare-assets # 设置步骤ID，便于后续步骤引用
@@ -122,19 +154,19 @@ jobs:
           # 根据操作系统不同，设置不同的文件路径
           if [ "${{ matrix.os }}" = "macos-latest" ]; then
             # macOS文件路径
-            echo "asset_path=./dist/vite-project-${{ steps.get-version.outputs.version }}.dmg" >> "$GITHUB_OUTPUT"
-            echo "asset_name=vite-project-mac.dmg" >> "$GITHUB_OUTPUT"
+            echo "asset_path=./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}.dmg" >> "$GITHUB_OUTPUT"
+            echo "asset_name=System-Resource-Monitor-mac.dmg" >> "$GITHUB_OUTPUT"
           elif [ "${{ matrix.os }}" = "windows-latest" ]; then
             # Windows文件路径（注意Windows文件名中使用空格而不是连字符）
-            echo "assets=./dist/vite-project ${{ steps.get-version.outputs.version }}.exe#vite-project-win-portable.exe,./dist/vite-project ${{ steps.get-version.outputs.version }}.msi#vite-project-win-installer.msi" >> "$GITHUB_OUTPUT"
+            echo "assets=./dist/System Resource Monitor ${{ steps.get-version.outputs.version }}.exe#System-Resource-Monitor-win-portable.exe,./dist/System Resource Monitor ${{ steps.get-version.outputs.version }}.msi#System-Resource-Monitor-win-installer.msi" >> "$GITHUB_OUTPUT"
           elif [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
             # Linux文件路径
-            echo "asset_path=./dist/vite-project-${{ steps.get-version.outputs.version }}.AppImage" >> "$GITHUB_OUTPUT"
-            echo "asset_name=vite-project-linux.AppImage" >> "$GITHUB_OUTPUT"
+            echo "asset_path=./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}.AppImage" >> "$GITHUB_OUTPUT"
+            echo "asset_name=System-Resource-Monitor-linux.AppImage" >> "$GITHUB_OUTPUT"
           fi
         shell: bash
 
-      # 步骤12: 上传macOS构建产物到GitHub Release
+      # 步骤14: 上传macOS构建产物到GitHub Release
       # 这一步将macOS应用添加到GitHub Releases页面
       - name: Upload Release Assets (macOS)
         uses: softprops/action-gh-release@v1 # 使用第三方操作来创建Release
@@ -151,7 +183,7 @@ jobs:
           # 是否为预发布版本
           prerelease: false
 
-      # 步骤13: 上传Linux构建产物到GitHub Release
+      # 步骤15: 上传Linux构建产物到GitHub Release
       - name: Upload Release Assets (Linux)
         uses: softprops/action-gh-release@v1
         if: matrix.os == 'ubuntu-latest'
@@ -162,15 +194,15 @@ jobs:
           draft: false
           prerelease: false
 
-      # 步骤14: 上传Windows构建产物到GitHub Release
+      # 步骤16: 上传Windows构建产物到GitHub Release
       - name: Upload Release Assets (Windows)
         uses: softprops/action-gh-release@v1
         if: matrix.os == 'windows-latest'
         with:
           # 使用多行格式指定多个文件
           files: |
-            ./dist/vite-project ${{ steps.get-version.outputs.version }}.exe
-            ./dist/vite-project ${{ steps.get-version.outputs.version }}.msi
+            ./dist/System Resource Monitor ${{ steps.get-version.outputs.version }}.exe
+            ./dist/System Resource Monitor ${{ steps.get-version.outputs.version }}.msi
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           name: Release ${{ github.ref_name }}
           draft: false

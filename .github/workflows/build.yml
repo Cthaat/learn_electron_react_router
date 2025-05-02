@@ -46,12 +46,44 @@ jobs:
           # 启用yarn包管理器的缓存
           cache: "yarn"
 
-      # 步骤3: 安装项目依赖
+      # 步骤3: 清理之前的构建产物
+      # 防止因为构建目录存在而导致的错误
+      - name: Clean build directory
+        run: |
+          rm -rf dist || true
+          mkdir -p dist
+        shell: bash
+
+      # 步骤4: 为macOS准备图标文件
+      # 在macOS环境下将PNG图标转换为ICNS格式
+      - name: Prepare macOS icon
+        if: matrix.os == 'macos-latest'
+        run: |
+          echo "正在生成macOS图标文件..."
+          # 创建iconset目录
+          mkdir -p IconSet.iconset
+          # 从PNG生成不同尺寸的图标
+          sips -z 16 16 public/icon.png --out IconSet.iconset/icon_16x16.png
+          sips -z 32 32 public/icon.png --out IconSet.iconset/icon_16x16@2x.png
+          sips -z 32 32 public/icon.png --out IconSet.iconset/icon_32x32.png
+          sips -z 64 64 public/icon.png --out IconSet.iconset/icon_32x32@2x.png
+          sips -z 128 128 public/icon.png --out IconSet.iconset/icon_128x128.png
+          sips -z 256 256 public/icon.png --out IconSet.iconset/icon_128x128@2x.png
+          sips -z 256 256 public/icon.png --out IconSet.iconset/icon_256x256.png
+          sips -z 512 512 public/icon.png --out IconSet.iconset/icon_256x256@2x.png
+          sips -z 512 512 public/icon.png --out IconSet.iconset/icon_512x512.png
+          sips -z 1024 1024 public/icon.png --out IconSet.iconset/icon_512x512@2x.png
+          # 生成icns文件
+          iconutil -c icns IconSet.iconset -o public/icon.icns
+          echo "ICNS图标文件已生成在 public/icon.icns"
+        shell: bash
+
+      # 步骤5: 安装项目依赖
       # 使用yarn包管理器安装项目所需的所有依赖
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      # 步骤4: 构建macOS版本应用
+      # 步骤6: 构建macOS版本应用
       # 仅在macOS操作系统上运行
       - name: Build macOS App
         if: matrix.os == 'macos-latest'
@@ -61,7 +93,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
-      # 步骤5: 构建Windows版本应用
+      # 步骤7: 构建Windows版本应用
       # 仅在Windows操作系统上运行
       - name: Build Windows App
         if: matrix.os == 'windows-latest'
@@ -70,7 +102,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
-      # 步骤6: 构建Linux版本应用
+      # 步骤8: 构建Linux版本应用
       # 仅在Linux操作系统上运行
       - name: Build Linux App
         if: matrix.os == 'ubuntu-latest'
@@ -79,7 +111,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
-      # 步骤7: 上传构建产物
+      # 步骤9: 上传构建产物
       # 这一步将构建好的应用文件保存为GitHub Action的"产物"
       # 你可以在GitHub Actions界面的工作流运行记录中下载这些文件
       - name: Upload Artifacts
