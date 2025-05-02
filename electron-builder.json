@@ -146,8 +146,8 @@
   "publish": [
     {
       "provider": "github",
-      "owner": "yourusername",
-      "repo": "sysmonitor"
+      "owner": "Cthaat",
+      "repo": "learn_electron_react_router"
     }
   ],
   "fileAssociations": [
