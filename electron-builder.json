@@ -22,6 +22,26 @@
     "gatekeeperAssess": false,
     "artifactName": "${productName}-${version}-${arch}.${ext}"
   },
+  "dmg": {
+    "icon": "./public/icon.png",
+    "iconSize": 100,
+    "window": {
+      "width": 540,
+      "height": 380
+    },
+    "contents": [
+      {
+        "x": 130,
+        "y": 220
+      },
+      {
+        "x": 410,
+        "y": 220,
+        "type": "link",
+        "path": "/Applications"
+      }
+    ]
+  },
   "linux": {
     "target": "AppImage",
     "category": "Utility",
