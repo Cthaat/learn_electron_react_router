@@ -173,8 +173,22 @@ jobs:
               ls -la ./dist/
             fi
           elif [ "${{ matrix.os }}" = "windows-latest" ]; then
-            # Windows文件路径（注意Windows文件名中使用空格而不是连字符）
-            echo "assets=./dist/System Resource Monitor ${{ steps.get-version.outputs.version }}.exe#System-Resource-Monitor-win-portable.exe,./dist/System Resource Monitor ${{ steps.get-version.outputs.version }}.msi#System-Resource-Monitor-win-installer.msi" >> "$GITHUB_OUTPUT"
+            # Windows文件路径（注意正确的文件名格式）
+            echo "正在查找 Windows 安装文件..."
+            # 检查 exe 文件
+            if [ -f "./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-x64.exe" ]; then
+              echo "已找到可执行文件: System Resource Monitor-${{ steps.get-version.outputs.version }}-x64.exe"
+              echo "exe_path=./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-x64.exe" >> "$GITHUB_OUTPUT"
+            else
+              echo "未找到 EXE 文件，列出 dist 目录内容:"
+              ls -la ./dist/
+            fi
+            
+            # 检查 msi 文件
+            if [ -f "./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-x64.msi" ]; then
+              echo "已找到安装程序: System Resource Monitor-${{ steps.get-version.outputs.version }}-x64.msi"
+              echo "msi_path=./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-x64.msi" >> "$GITHUB_OUTPUT"
+            fi
           elif [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
             # Linux文件路径
             echo "asset_path=./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-x86_64.AppImage" >> "$GITHUB_OUTPUT"
@@ -230,10 +244,10 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: matrix.os == 'windows-latest'
         with:
-          # 使用多行格式指定多个文件
+          # 使用多行格式指定多个文件，正确指定文件路径
           files: |
-            ./dist/System Resource Monitor ${{ steps.get-version.outputs.version }}.exe
-            ./dist/System Resource Monitor ${{ steps.get-version.outputs.version }}.msi
+            ${{ steps.prepare-assets.outputs.exe_path }}
+            ${{ steps.prepare-assets.outputs.msi_path }}
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           name: Release ${{ github.ref_name }}
           draft: false
