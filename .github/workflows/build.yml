@@ -54,7 +54,11 @@ jobs:
           mkdir -p dist
         shell: bash
 
-      # 步骤4: 为macOS准备图标文件
+      # 步骤4: 设置构建 ID
+      - name: 设置构建 ID
+        run: echo "BUILD_ID=$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
+
+      # 步骤5: 为macOS准备图标文件
       # 在macOS环境下将PNG图标转换为ICNS格式
       - name: Prepare macOS icon
         if: matrix.os == 'macos-latest'
@@ -78,12 +82,12 @@ jobs:
           echo "ICNS图标文件已生成在 public/icon.icns"
         shell: bash
 
-      # 步骤5: 安装项目依赖
+      # 步骤6: 安装项目依赖
       # 使用yarn包管理器安装项目所需的所有依赖
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      # 步骤6: 构建macOS版本应用
+      # 步骤7: 构建macOS版本应用
       # 仅在macOS操作系统上运行
       - name: Build macOS App
         if: matrix.os == 'macos-latest'
@@ -93,7 +97,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
-      # 步骤7: 构建Windows版本应用
+      # 步骤8: 构建Windows版本应用
       # 仅在Windows操作系统上运行
       - name: Build Windows App
         if: matrix.os == 'windows-latest'
@@ -102,7 +106,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
-      # 步骤8: 构建Linux版本应用
+      # 步骤9: 构建Linux版本应用
       # 仅在Linux操作系统上运行
       - name: Build Linux App
         if: matrix.os == 'ubuntu-latest'
@@ -111,7 +115,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
-      # 步骤9: 上传构建产物
+      # 步骤10: 上传构建产物
       # 这一步将构建好的应用文件保存为GitHub Action的"产物"
       # 你可以在GitHub Actions界面的工作流运行记录中下载这些文件
       - name: Upload Artifacts
