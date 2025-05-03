@@ -1,25 +1,33 @@
 {
+  "productName": "System Resource Monitor",
   "appId": "com.n-ziermann.prepare",
+  "copyright": "Copyright © 2025 Your Company",
   "icon": "./public/icon.png",
+  "directories": {
+    "output": "dist",
+    "buildResources": "public"
+  },
   "extraResources": [
-    "dist_electron/preload.cjs",
-    "public/**"
+    "dist_electron/preload.cjs"
   ],
   "files": [
     "dist_electron",
     "dist_react"
   ],
   "mac": {
-    "target": "dmg"
+    "target": "dmg",
+    "icon": "./public/icon.icns"
   },
   "linux": {
     "target": "AppImage",
-    "category": "Utility"
+    "category": "Utility",
+    "icon": "./public/icon.png"
   },
   "win": {
     "target": [
       "portable",
       "msi"
-    ]
+    ],
+    "icon": "./public/icon.ico"
   }
 }
