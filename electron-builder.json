@@ -15,7 +15,11 @@
     "dist_react"
   ],
   "mac": {
-    "target": "dmg",
+    "category": "public.app-category.utilities",
+    "target": [
+      "dmg",
+      "zip"
+    ],
     "icon": "./public/icon.icns"
   },
   "linux": {
