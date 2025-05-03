@@ -15,36 +15,8 @@
     "dist_react"
   ],
   "mac": {
-    "category": "public.app-category.utilities",
-    "target": [
-      "dmg",
-      "zip"
-    ],
-    "darkModeSupport": true,
-    "icon": "./public/icon.icns",
-    "hardenedRuntime": true,
-    "gatekeeperAssess": false,
-    "artifactName": "${productName}-${version}-${arch}.${ext}"
-  },
-  "dmg": {
-    "icon": "./public/icon.png",
-    "iconSize": 100,
-    "window": {
-      "width": 540,
-      "height": 380
-    },
-    "contents": [
-      {
-        "x": 130,
-        "y": 220
-      },
-      {
-        "x": 410,
-        "y": 220,
-        "type": "link",
-        "path": "/Applications"
-      }
-    ]
+    "target": "dmg",
+    "icon": "./public/icon.icns"
   },
   "linux": {
     "target": "AppImage",
