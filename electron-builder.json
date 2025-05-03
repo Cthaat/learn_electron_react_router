@@ -47,7 +47,6 @@
       "AppImage",
       "deb",
       "rpm",
-      "snap",
       "tar.gz"
     ],
     "category": "Utility",
