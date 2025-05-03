@@ -63,9 +63,7 @@
       "libnotify4",
       "libxtst6",
       "libnss3"
-    ],
-    "afterInstall": "build/debian/postinst",
-    "afterRemove": "build/debian/postrm"
+    ]
   },
   "rpm": {
     "depends": [
