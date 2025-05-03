@@ -69,7 +69,7 @@
       }
     ],
     "icon": "./public/icon.ico",
-    "publisherName": "Your Company, Inc.",
+    "legalTrademarks": "Your Company, Inc.",
     "verifyUpdateCodeSignature": false,
     "artifactName": "${productName}-${version}-${arch}.${ext}"
   },
