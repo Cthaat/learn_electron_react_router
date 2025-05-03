@@ -153,27 +153,42 @@ jobs:
         run: |
           # 根据操作系统不同，设置不同的文件路径
           if [ "${{ matrix.os }}" = "macos-latest" ]; then
-            # macOS文件路径
-            echo "asset_path=./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}.dmg" >> "$GITHUB_OUTPUT"
-            echo "asset_name=System-Resource-Monitor-mac.dmg" >> "$GITHUB_OUTPUT"
+            # 检查是否有 arm64 版本的 DMG 文件
+            if [ -f "./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-arm64.dmg" ]; then
+              echo "已找到 arm64 版本的 DMG 文件"
+              echo "arm64_path=./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-arm64.dmg" >> "$GITHUB_OUTPUT"
+              echo "arm64_name=System-Resource-Monitor-mac-arm64.dmg" >> "$GITHUB_OUTPUT"
+            fi
+            
+            # 检查是否有 x64 版本的 DMG 文件
+            if [ -f "./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-x64.dmg" ]; then
+              echo "已找到 x64 版本的 DMG 文件"
+              echo "x64_path=./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-x64.dmg" >> "$GITHUB_OUTPUT"
+              echo "x64_name=System-Resource-Monitor-mac-x64.dmg" >> "$GITHUB_OUTPUT"
+            fi
+            
+            # 如果两个架构都找不到，列出目录内容以便调试
+            if [ ! -f "./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-arm64.dmg" ] && [ ! -f "./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-x64.dmg" ]; then
+              echo "无法找到 DMG 文件，列出 dist 目录内容:"
+              ls -la ./dist/
+            fi
           elif [ "${{ matrix.os }}" = "windows-latest" ]; then
             # Windows文件路径（注意Windows文件名中使用空格而不是连字符）
             echo "assets=./dist/System Resource Monitor ${{ steps.get-version.outputs.version }}.exe#System-Resource-Monitor-win-portable.exe,./dist/System Resource Monitor ${{ steps.get-version.outputs.version }}.msi#System-Resource-Monitor-win-installer.msi" >> "$GITHUB_OUTPUT"
           elif [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
             # Linux文件路径
-            echo "asset_path=./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}.AppImage" >> "$GITHUB_OUTPUT"
+            echo "asset_path=./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-x86_64.AppImage" >> "$GITHUB_OUTPUT"
             echo "asset_name=System-Resource-Monitor-linux.AppImage" >> "$GITHUB_OUTPUT"
           fi
         shell: bash
 
-      # 步骤14: 上传macOS构建产物到GitHub Release
-      # 这一步将macOS应用添加到GitHub Releases页面
-      - name: Upload Release Assets (macOS)
-        uses: softprops/action-gh-release@v1 # 使用第三方操作来创建Release
-        if: matrix.os == 'macos-latest'
+      # 步骤14: 上传macOS ARM64构建产物到GitHub Release
+      - name: Upload Release Assets (macOS ARM64)
+        uses: softprops/action-gh-release@v1
+        if: matrix.os == 'macos-latest' && steps.prepare-assets.outputs.arm64_path != ''
         with:
           # 要上传的文件路径
-          files: ${{ steps.prepare-assets.outputs.asset_path }}
+          files: ${{ steps.prepare-assets.outputs.arm64_path }}
           # GitHub访问令牌
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           # Release的名称
@@ -183,7 +198,23 @@ jobs:
           # 是否为预发布版本
           prerelease: false
 
-      # 步骤15: 上传Linux构建产物到GitHub Release
+      # 步骤15: 上传macOS x64构建产物到GitHub Release
+      - name: Upload Release Assets (macOS x64)
+        uses: softprops/action-gh-release@v1
+        if: matrix.os == 'macos-latest' && steps.prepare-assets.outputs.x64_path != ''
+        with:
+          # 要上传的文件路径
+          files: ${{ steps.prepare-assets.outputs.x64_path }}
+          # GitHub访问令牌
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          # Release的名称
+          name: Release ${{ github.ref_name }}
+          # 是否为草稿版本
+          draft: false
+          # 是否为预发布版本
+          prerelease: false
+
+      # 步骤16: 上传Linux构建产物到GitHub Release
       - name: Upload Release Assets (Linux)
         uses: softprops/action-gh-release@v1
         if: matrix.os == 'ubuntu-latest'
@@ -194,7 +225,7 @@ jobs:
           draft: false
           prerelease: false
 
-      # 步骤16: 上传Windows构建产物到GitHub Release
+      # 步骤17: 上传Windows构建产物到GitHub Release
       - name: Upload Release Assets (Windows)
         uses: softprops/action-gh-release@v1
         if: matrix.os == 'windows-latest'
