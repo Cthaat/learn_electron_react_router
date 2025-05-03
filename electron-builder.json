@@ -63,7 +63,7 @@
       "provider": "github",
       "owner": "Cthaat",
       "repo": "learn_electron_react_router",
-      "publishAutoUpdate": false
+      "releaseType": "draft"
     }
   ]
 }
