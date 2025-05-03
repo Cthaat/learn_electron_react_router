@@ -83,7 +83,6 @@
     "createDesktopShortcut": true,
     "createStartMenuShortcut": true,
     "shortcutName": "系统资源监控器",
-    "license": "LICENSE.txt",
-    "include": "build/installer.nsh"
+    "license": "LICENSE.txt"
   }
 }
