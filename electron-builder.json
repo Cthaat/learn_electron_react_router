@@ -4,8 +4,7 @@
   "copyright": "Copyright © 2025 Your Company",
   "icon": "./public/icon.png",
   "directories": {
-    "output": "dist",
-    "buildResources": "public"
+    "output": "dist"
   },
   "extraResources": [
     "dist_electron/preload.cjs",
