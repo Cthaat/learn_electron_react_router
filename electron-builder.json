@@ -8,7 +8,8 @@
     "buildResources": "public"
   },
   "extraResources": [
-    "dist_electron/preload.cjs"
+    "dist_electron/preload.cjs",
+    "public/**"
   ],
   "files": [
     "dist_electron",
