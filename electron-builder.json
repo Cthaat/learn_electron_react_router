@@ -16,7 +16,11 @@
   ],
   "mac": {
     "target": "dmg",
-    "icon": "./public/icon.icns"
+    "icon": "./public/icon.icns",
+    "darkModeSupport": true,
+    "hardenedRuntime": true,
+    "gatekeeperAssess": false,
+    "artifactName": "${productName}-${version}-${arch}.${ext}"
   },
   "linux": {
     "target": "AppImage",
