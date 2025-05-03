@@ -121,11 +121,6 @@ jobs:
           name: ${{ matrix.os }}-artifacts
           # 指定要上传哪些文件路径，支持通配符
           path: |
-            dist/*.dmg  # macOS磁盘镜像文件
-            dist/*.exe  # Windows可执行文件
-            dist/*.AppImage  # Linux AppImage应用文件
-            dist/*.msi  # Windows安装包
-            dist/*.deb  # Debian/Ubuntu安装包
-            dist/*.rpm  # Red Hat/Fedora安装包
+            dist/*.*
           # 如果没找到匹配的文件，不报错继续执行
           if-no-files-found: ignore
