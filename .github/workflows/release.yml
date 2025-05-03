@@ -50,11 +50,7 @@ jobs:
           mkdir -p dist
         shell: bash
 
-      # 步骤4: 设置构建 ID
-      - name: 设置构建 ID
-        run: echo "BUILD_ID=$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
-
-      # 步骤5: 为macOS准备图标文件
+      # 步骤4: 为macOS准备图标文件
       # 在macOS环境下将PNG图标转换为ICNS格式
       - name: Prepare macOS icon
         if: matrix.os == 'macos-latest'
@@ -78,7 +74,7 @@ jobs:
           echo "ICNS图标文件已生成在 public/icon.icns"
         shell: bash
 
-      # 步骤6: 从package.json文件提取版本号
+      # 步骤5: 从package.json文件提取版本号
       # 这一步很重要，它读取你项目中的版本信息，用于后续文件命名
       - name: Get Version from package.json
         id: get-version # 设置步骤ID，便于后续步骤引用这一步的输出
@@ -92,19 +88,19 @@ jobs:
         # 指定使用bash shell执行命令，确保跨平台兼容性
         shell: bash
 
-      # 步骤7: 安装项目依赖
+      # 步骤6: 安装项目依赖
       # 使用yarn包管理器安装项目所需的所有依赖
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      # 步骤8: 打印package.json中的版本信息（调试用）
+      # 步骤7: 打印package.json中的版本信息（调试用）
       - name: Print package.json version
         run: |
           echo "Package.json version:"
           cat package.json | grep version
         shell: bash
 
-      # 步骤9: 构建macOS版本应用
+      # 步骤8: 构建macOS版本应用
       # 仅在macOS操作系统上运行
       - name: Build macOS App
         if: matrix.os == 'macos-latest'
@@ -114,7 +110,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
-      # 步骤10: 构建Windows版本应用
+      # 步骤9: 构建Windows版本应用
       # 仅在Windows操作系统上运行
       - name: Build Windows App
         if: matrix.os == 'windows-latest'
@@ -123,7 +119,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
-      # 步骤11: 构建Linux版本应用
+      # 步骤10: 构建Linux版本应用
       # 仅在Linux操作系统上运行
       - name: Build Linux App
         if: matrix.os == 'ubuntu-latest'
@@ -132,7 +128,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
-      # 步骤12: 列出构建产物目录内容（Unix系统）
+      # 步骤11: 列出构建产物目录内容（Unix系统）
       # 这是调试用的步骤，帮助你查看生成了哪些文件
       - name: List dist directory (Unix)
         if: matrix.os != 'windows-latest'
@@ -141,7 +137,7 @@ jobs:
           ls -la dist/
         shell: bash
 
-      # 步骤13: 列出构建产物目录内容（Windows系统）
+      # 步骤12: 列出构建产物目录内容（Windows系统）
       # Windows使用不同的命令列出文件
       - name: List dist directory (Windows)
         if: matrix.os == 'windows-latest'
@@ -150,7 +146,7 @@ jobs:
           Get-ChildItem -Path dist/ -Force
         shell: pwsh
 
-      # 步骤14: 准备发布资产的路径
+      # 步骤13: 准备发布资产的路径
       # 根据不同操作系统，构建不同的文件路径
       - name: Prepare asset paths
         id: prepare-assets # 设置步骤ID，便于后续步骤引用
@@ -170,7 +166,7 @@ jobs:
           fi
         shell: bash
 
-      # 步骤15: 上传macOS构建产物到GitHub Release
+      # 步骤14: 上传macOS构建产物到GitHub Release
       # 这一步将macOS应用添加到GitHub Releases页面
       - name: Upload Release Assets (macOS)
         uses: softprops/action-gh-release@v1 # 使用第三方操作来创建Release
@@ -187,7 +183,7 @@ jobs:
           # 是否为预发布版本
           prerelease: false
 
-      # 步骤16: 上传Linux构建产物到GitHub Release
+      # 步骤15: 上传Linux构建产物到GitHub Release
       - name: Upload Release Assets (Linux)
         uses: softprops/action-gh-release@v1
         if: matrix.os == 'ubuntu-latest'
@@ -198,7 +194,7 @@ jobs:
           draft: false
           prerelease: false
 
-      # 步骤17: 上传Windows构建产物到GitHub Release
+      # 步骤16: 上传Windows构建产物到GitHub Release
       - name: Upload Release Assets (Windows)
         uses: softprops/action-gh-release@v1
         if: matrix.os == 'windows-latest'

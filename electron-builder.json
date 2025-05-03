@@ -24,7 +24,7 @@
     "icon": "./public/icon.icns",
     "hardenedRuntime": true,
     "gatekeeperAssess": false,
-    "artifactName": "${productName}-${version}-${arch}-${BUILD_ID}.${ext}"
+    "artifactName": "${productName}-${version}-${arch}.${ext}"
   },
   "dmg": {
     "icon": "./public/icon.png",
@@ -57,5 +57,13 @@
       "msi"
     ],
     "icon": "./public/icon.ico"
-  }
+  },
+  "publish": [
+    {
+      "provider": "github",
+      "owner": "Cthaat",
+      "repo": "learn_electron_react_router",
+      "publishAutoUpdate": false
+    }
+  ]
 }
