@@ -115,10 +115,7 @@ jobs:
       - name: Build Windows App
         if: matrix.os == 'windows-latest'
         # 修改构建命令，与本地构建保持一致
-        run: |
-          yarn run transpile:electron
-          yarn run build
-          electron-builder --win --x64 --config.win.artifactName="${productName}-${version}.${ext}"
+        run: yarn dist:win
         env:
           GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
