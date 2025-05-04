@@ -190,9 +190,41 @@ jobs:
               echo "msi_path=./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-x64.msi" >> "$GITHUB_OUTPUT"
             fi
           elif [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
-            # Linux文件路径
-            echo "asset_path=./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-x86_64.AppImage" >> "$GITHUB_OUTPUT"
-            echo "asset_name=System-Resource-Monitor-linux.AppImage" >> "$GITHUB_OUTPUT"
+            # Linux 文件路径 - 检查和设置所有 Linux 构建产物
+            echo "正在查找 Linux 安装文件..."
+            
+            # 检查 AppImage 文件
+            if [ -f "./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-x86_64.AppImage" ]; then
+              echo "已找到 AppImage 文件: System Resource Monitor-${{ steps.get-version.outputs.version }}-x86_64.AppImage"
+              echo "appimage_path=./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-x86_64.AppImage" >> "$GITHUB_OUTPUT"
+            fi
+            
+            # 检查 deb 文件
+            if [ -f "./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-amd64.deb" ]; then
+              echo "已找到 DEB 包: System Resource Monitor-${{ steps.get-version.outputs.version }}-amd64.deb"
+              echo "deb_path=./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-amd64.deb" >> "$GITHUB_OUTPUT"
+            fi
+            
+            # 检查 rpm 文件
+            if [ -f "./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-x86_64.rpm" ]; then
+              echo "已找到 RPM 包: System Resource Monitor-${{ steps.get-version.outputs.version }}-x86_64.rpm"
+              echo "rpm_path=./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-x86_64.rpm" >> "$GITHUB_OUTPUT"
+            fi
+            
+            # 检查 tar.gz 文件
+            if [ -f "./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-x64.tar.gz" ]; then
+              echo "已找到 tar.gz 文件: System Resource Monitor-${{ steps.get-version.outputs.version }}-x64.tar.gz"
+              echo "targz_path=./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-x64.tar.gz" >> "$GITHUB_OUTPUT"
+            fi
+            
+            # 如果没有找到任何文件，列出目录内容以便调试
+            if [ ! -f "./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-x86_64.AppImage" ] && 
+               [ ! -f "./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-amd64.deb" ] && 
+               [ ! -f "./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-x86_64.rpm" ] && 
+               [ ! -f "./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-x64.tar.gz" ]; then
+              echo "无法找到任何 Linux 安装文件，列出 dist 目录内容:"
+              ls -la ./dist/
+            fi
           fi
         shell: bash
 
@@ -233,7 +265,12 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: matrix.os == 'ubuntu-latest'
         with:
-          files: ${{ steps.prepare-assets.outputs.asset_path }}
+          # 使用多行格式指定所有Linux构建产物
+          files: |
+            ${{ steps.prepare-assets.outputs.appimage_path }}
+            ${{ steps.prepare-assets.outputs.deb_path }}
+            ${{ steps.prepare-assets.outputs.rpm_path }}
+            ${{ steps.prepare-assets.outputs.targz_path }}
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           name: Release ${{ github.ref_name }}
           draft: false
