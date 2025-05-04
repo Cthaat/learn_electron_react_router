@@ -47,6 +47,7 @@
       "AppImage",
       "deb",
       "rpm",
+      "snap",
       "tar.gz"
     ],
     "category": "Utility",
@@ -71,6 +72,29 @@
     ],
     "fpm": [
       "--rpm-rpmbuild-define=_build_id_links none"
+    ]
+  },
+  "snap": {
+    "confinement": "strict",
+    "grade": "stable",
+    "summary": "系统资源监控工具",
+    "assumes": [
+      "snapd2.55"
+    ],
+    "plugs": [
+      "default",
+      "home",
+      "desktop",
+      "desktop-legacy",
+      "wayland",
+      "x11",
+      "unity7",
+      "browser-support",
+      "network",
+      "gsettings",
+      "audio-playback",
+      "pulseaudio",
+      "opengl"
     ]
   },
   "win": {
