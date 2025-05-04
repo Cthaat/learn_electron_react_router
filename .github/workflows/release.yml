@@ -114,8 +114,11 @@ jobs:
       # 仅在Windows操作系统上运行
       - name: Build Windows App
         if: matrix.os == 'windows-latest'
-        # 执行在package.json中定义的dist:win脚本
-        run: yarn dist:win
+        # 修改构建命令，与本地构建保持一致
+        run: |
+          yarn run transpile:electron
+          yarn run build
+          electron-builder --win --x64 --config.win.artifactName="${productName}-${version}.${ext}"
         env:
           GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
@@ -173,10 +176,14 @@ jobs:
               ls -la ./dist/
             fi
           elif [ "${{ matrix.os }}" = "windows-latest" ]; then
-            # Windows文件路径（注意正确的文件名格式）
+            # 修改Windows文件路径检查，匹配不带架构标识的文件名
             echo "正在查找 Windows 安装文件..."
-            # 检查 exe 文件
-            if [ -f "./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-x64.exe" ]; then
+            # 检查不带架构标识的exe文件
+            if [ -f "./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}.exe" ]; then
+              echo "已找到可执行文件: System Resource Monitor-${{ steps.get-version.outputs.version }}.exe"
+              echo "exe_path=./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}.exe" >> "$GITHUB_OUTPUT"
+            # 回退检查带架构标识的exe文件
+            elif [ -f "./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-x64.exe" ]; then
               echo "已找到可执行文件: System Resource Monitor-${{ steps.get-version.outputs.version }}-x64.exe"
               echo "exe_path=./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-x64.exe" >> "$GITHUB_OUTPUT"
             else
@@ -184,8 +191,12 @@ jobs:
               ls -la ./dist/
             fi
             
-            # 检查 msi 文件
-            if [ -f "./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-x64.msi" ]; then
+            # 检查不带架构标识的msi文件
+            if [ -f "./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}.msi" ]; then
+              echo "已找到安装程序: System Resource Monitor-${{ steps.get-version.outputs.version }}.msi"
+              echo "msi_path=./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}.msi" >> "$GITHUB_OUTPUT"
+            # 回退检查带架构标识的msi文件
+            elif [ -f "./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-x64.msi" ]; then
               echo "已找到安装程序: System Resource Monitor-${{ steps.get-version.outputs.version }}-x64.msi"
               echo "msi_path=./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-x64.msi" >> "$GITHUB_OUTPUT"
             fi
