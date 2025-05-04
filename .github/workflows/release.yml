@@ -4,6 +4,7 @@ name: Release Electron App
 
 # 触发条件：仅当推送标签(tag)时触发
 # 标签必须以"v"开头，如v1.0.0、v0.1.0等
+
 on:
   push:
     tags:
