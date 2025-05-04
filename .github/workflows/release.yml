@@ -153,6 +153,11 @@ jobs:
         run: |
           # 根据操作系统不同，设置不同的文件路径
           if [ "${{ matrix.os }}" = "macos-latest" ]; then
+            # macOS 文件路径 - 检查和设置所有 macOS 构建产物
+            echo "正在查找 macOS 安装文件..."
+            # 输出文件夹中的全部文件列表
+            echo "dist 目录内容:"
+            ls -la ./dist/
             # 检查是否有 arm64 版本的 DMG 文件
             if [ -f "./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-arm64.dmg" ]; then
               echo "已找到 arm64 版本的 DMG 文件"
@@ -173,16 +178,27 @@ jobs:
               ls -la ./dist/
             fi
           elif [ "${{ matrix.os }}" = "windows-latest" ]; then
+            # win 文件路径 - 检查和设置所有 win 构建产物
+            echo "正在查找 win 安装文件..."
+            # 输出文件夹中的全部文件列表
+            echo "dist 目录内容:"
+            ls -la ./dist/
             # 修改Windows文件路径检查，匹配不带架构标识的文件名
             echo "正在查找 Windows 安装文件..."
             # 检查不带架构标识的exe文件
             if [ -f "./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}.exe" ]; then
               echo "已找到可执行文件: System Resource Monitor-${{ steps.get-version.outputs.version }}.exe"
               echo "exe_path=./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}.exe" >> "$GITHUB_OUTPUT"
+            if [ -f "./dist/System Resource Monitor ${{ steps.get-version.outputs.version }}.exe" ]; then
+              echo "已找到可执行文件: System Resource Monitor ${{ steps.get-version.outputs.version }}.exe"
+              echo "exe_path=./dist/System Resource Monitor ${{ steps.get-version.outputs.version }}.exe" >> "$GITHUB_OUTPUT"
             # 回退检查带架构标识的exe文件
             elif [ -f "./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-x64.exe" ]; then
               echo "已找到可执行文件: System Resource Monitor-${{ steps.get-version.outputs.version }}-x64.exe"
               echo "exe_path=./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-x64.exe" >> "$GITHUB_OUTPUT"
+            elif [ -f "./dist/System Resource Monitor ${{ steps.get-version.outputs.version }}-x64.exe" ]; then
+              echo "已找到可执行文件: System Resource Monito ${{ steps.get-version.outputs.version }}-x64.exe"
+              echo "exe_path=./dist/System Resource Monitor ${{ steps.get-version.outputs.version }}-x64.exe" >> "$GITHUB_OUTPUT"
             else
               echo "未找到 EXE 文件，列出 dist 目录内容:"
               ls -la ./dist/
@@ -198,6 +214,12 @@ jobs:
               echo "msi_path=./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-x64.msi" >> "$GITHUB_OUTPUT"
             fi
           elif [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
+            # linux 文件路径 - 检查和设置所有 linux 构建产物
+            echo "正在查找 linux 安装文件..."
+            # 输出文件夹中的全部文件列表
+            echo "dist 目录内容:"
+            ls -la ./dist/
+
             # Linux 文件路径 - 检查和设置所有 Linux 构建产物
             echo "正在查找 Linux 安装文件..."
             
