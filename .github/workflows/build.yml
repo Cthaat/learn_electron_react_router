@@ -111,6 +111,50 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
+      # 新增步骤：详细列出构建产物文件夹的所有文件
+      - name: List all build artifacts (详细列出所有构建产物)
+        run: |
+          echo "======= 构建产物详细列表 ======="
+
+          if [ "${{ matrix.os }}" = "windows-latest" ]; then
+            # Windows系统使用PowerShell命令递归列出文件
+            echo "Windows构建产物详细列表:"
+            Get-ChildItem -Path dist -Recurse | ForEach-Object {
+              $indent = "  " * ($_.FullName.Split("\").Count - ($_.FullName.Split("\") | Where-Object { $_ -eq "dist" }).Count)
+              $size = if ($_.PSIsContainer) { "[DIR]" } else { "{0:N2} KB" -f ($_.Length / 1KB) }
+              $date = $_.LastWriteTime.ToString("yyyy-MM-dd HH:mm:ss")
+              echo "${indent}$($_.Name) - $size - $date"
+            }
+            # 额外显示文件数量统计
+            $fileCount = (Get-ChildItem -Path dist -Recurse -File).Count
+            $dirCount = (Get-ChildItem -Path dist -Recurse -Directory).Count
+            echo "总计: $fileCount 个文件, $dirCount 个目录"
+          else
+            # macOS和Linux使用find和ls命令
+            echo "${{ matrix.os }}构建产物详细列表:"
+            # 使用find命令递归列出所有文件和目录
+            find dist -type f -o -type d | sort | while read -r item; do
+              # 获取相对于dist的路径深度
+              depth=$(($(echo "$item" | tr -cd '/' | wc -c) - $(echo "dist" | tr -cd '/' | wc -c)))
+              indent=$(printf '%*s' $((depth * 2)) '')
+              # 如果是目录，标记为[DIR]，否则显示文件大小
+              if [ -d "$item" ]; then
+                echo "${indent}$(basename "$item") - [DIR]"
+              else
+                size=$(ls -lh "$item" | awk '{print $5}')
+                date=$(ls -l "$item" | awk '{print $6, $7, $8}')
+                echo "${indent}$(basename "$item") - $size - $date"
+              fi
+            done
+            # 统计文件和目录数量
+            fileCount=$(find dist -type f | wc -l)
+            dirCount=$(find dist -type d | wc -l)
+            echo "总计: $fileCount 个文件, $dirCount 个目录"
+          fi
+
+          echo "================================="
+        shell: bash
+
       # 步骤9: 上传构建产物
       # 这一步将构建好的应用文件保存为GitHub Action的"产物"
       # 你可以在GitHub Actions界面的工作流运行记录中下载这些文件
