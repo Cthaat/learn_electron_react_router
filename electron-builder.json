@@ -79,27 +79,25 @@
         "target": "portable",
         "arch": [
           "x64"
-        ],
-        "artifactName": "${productName} ${version}.${ext}"
+        ]
       },
       {
         "target": "msi",
         "arch": [
           "x64"
-        ],
-        "artifactName": "${productName}-${version}.${ext}"
+        ]
       },
       {
         "target": "nsis",
         "arch": [
           "x64"
-        ],
-        "artifactName": "${productName}-${version}.${ext}"
+        ]
       }
     ],
     "icon": "./public/icon.ico",
     "legalTrademarks": "Your Company, Inc.",
     "verifyUpdateCodeSignature": false,
+    "artifactName": "${productName}-${version}-${arch}.${ext}",
     "forceCodeSigning": false
   },
   "nsis": {
