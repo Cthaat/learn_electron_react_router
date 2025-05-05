@@ -97,7 +97,8 @@
     "icon": "./public/icon.ico",
     "legalTrademarks": "Your Company, Inc.",
     "verifyUpdateCodeSignature": false,
-    "artifactName": "${productName}-${version}-${arch}.${ext}"
+    "artifactName": "${productName}-${version}-${arch}.${ext}",
+    "forceCodeSigning": false
   },
   "nsis": {
     "oneClick": false,
@@ -110,5 +111,12 @@
     "createStartMenuShortcut": true,
     "shortcutName": "系统资源监控器",
     "license": "LICENSE.txt"
-  }
+  },
+  "publish": [
+    {
+      "provider": "github",
+      "owner": "Cthaat",
+      "repo": "learn_electron_react_router"
+    }
+  ]
 }

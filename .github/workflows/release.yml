@@ -115,10 +115,19 @@ jobs:
       # 仅在Windows操作系统上运行
       - name: Build Windows App
         if: matrix.os == 'windows-latest'
-        # 修改构建命令，与本地构建保持一致
-        run: yarn dist:win
+        # 修改构建命令，与本地构建保持一致，并添加额外调试信息
+        run: |
+          echo "开始构建Windows应用..."
+          echo "查看electron-builder.json配置:"
+          cat electron-builder.json
+
+          # 执行构建，确保使用正确的artifactName配置
+          yarn run transpile:electron
+          yarn run build
+          electron-builder --win --x64
         env:
           GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          DEBUG: electron-builder
 
       # 步骤10: 构建Linux版本应用
       # 仅在Linux操作系统上运行
@@ -185,44 +194,43 @@ jobs:
             echo "dist 目录内容:"
             ls -la ./dist/
             
-            # 检查不带架构标识的exe文件
-            if [ -f "./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}.exe" ]; then
-              echo "已找到可执行文件: System Resource Monitor-${{ steps.get-version.outputs.version }}.exe"
-              echo "exe_path=./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}.exe" >> "$GITHUB_OUTPUT"
-            elif [ -f "./dist/System Resource Monitor ${{ steps.get-version.outputs.version }}.exe" ]; then
-              echo "已找到可执行文件: System Resource Monitor ${{ steps.get-version.outputs.version }}.exe"
-              echo "exe_path=./dist/System Resource Monitor ${{ steps.get-version.outputs.version }}.exe" >> "$GITHUB_OUTPUT"
-            # 回退检查带架构标识的exe文件
-            elif [ -f "./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-x64.exe" ]; then
-              echo "已找到可执行文件: System Resource Monitor-${{ steps.get-version.outputs.version }}-x64.exe"
-              echo "exe_path=./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-x64.exe" >> "$GITHUB_OUTPUT"
-            elif [ -f "./dist/System Resource Monitor ${{ steps.get-version.outputs.version }}-x64.exe" ]; then
-              echo "已找到可执行文件: System Resource Monitor ${{ steps.get-version.outputs.version }}-x64.exe"
-              echo "exe_path=./dist/System Resource Monitor ${{ steps.get-version.outputs.version }}-x64.exe" >> "$GITHUB_OUTPUT"
-            else
-              echo "未找到 EXE 文件，列出 dist 目录内容:"
-              ls -la ./dist/
-            fi
-
-            # 检查不带架构标识的exe文件
-            if [ -f "./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}.msi" ]; then
-              echo "已找到可执行文件: System Resource Monitor-${{ steps.get-version.outputs.version }}.msi"
-              echo "exe_path=./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}.msi" >> "$GITHUB_OUTPUT"
-            elif [ -f "./dist/System Resource Monitor ${{ steps.get-version.outputs.version }}.msi" ]; then
-              echo "已找到可执行文件: System Resource Monitor ${{ steps.get-version.outputs.version }}.msi"
-              echo "exe_path=./dist/System Resource Monitor ${{ steps.get-version.outputs.version }}.msi" >> "$GITHUB_OUTPUT"
-            # 回退检查带架构标识的exe文件
-            elif [ -f "./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-x64.msi" ]; then
-              echo "已找到可执行文件: System Resource Monitor-${{ steps.get-version.outputs.version }}-x64.msi"
-              echo "exe_path=./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-x64.msi" >> "$GITHUB_OUTPUT"
-            elif [ -f "./dist/System Resource Monitor ${{ steps.get-version.outputs.version }}-x64.msi" ]; then
-              echo "已找到可执行文件: System Resource Monitor ${{ steps.get-version.outputs.version }}-x64.msi"
-              echo "exe_path=./dist/System Resource Monitor ${{ steps.get-version.outputs.version }}-x64.msi" >> "$GITHUB_OUTPUT"
-            else
-              echo "未找到 EXE 文件，列出 dist 目录内容:"
-              ls -la ./dist/
+            # 检查带架构标识的exe文件
+            if [ -f "./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-x64.exe" ]; then
+              echo "已找到带架构标识的可执行文件: System Resource Monitor-${{ steps.get-version.outputs.version }}-x64.exe"
+              echo "exe_x64_path=./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-x64.exe" >> "$GITHUB_OUTPUT"
             fi
             
+            # 检查不带架构标识的exe文件
+            if [ -f "./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}.exe" ]; then
+              echo "已找到不带架构标识的可执行文件: System Resource Monitor-${{ steps.get-version.outputs.version }}.exe"
+              echo "exe_path=./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}.exe" >> "$GITHUB_OUTPUT"
+            elif [ -f "./dist/System Resource Monitor ${{ steps.get-version.outputs.version }}.exe" ]; then
+              echo "已找到不带架构标识的可执行文件: System Resource Monitor ${{ steps.get-version.outputs.version }}.exe"
+              echo "exe_path=./dist/System Resource Monitor ${{ steps.get-version.outputs.version }}.exe" >> "$GITHUB_OUTPUT"
+            fi
+            
+            # 检查带架构标识的msi文件
+            if [ -f "./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-x64.msi" ]; then
+              echo "已找到带架构标识的安装程序: System Resource Monitor-${{ steps.get-version.outputs.version }}-x64.msi"
+              echo "msi_x64_path=./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-x64.msi" >> "$GITHUB_OUTPUT"
+            fi
+            
+            # 检查不带架构标识的msi文件
+            if [ -f "./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}.msi" ]; then
+              echo "已找到不带架构标识的安装程序: System Resource Monitor-${{ steps.get-version.outputs.version }}.msi"
+              echo "msi_path=./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}.msi" >> "$GITHUB_OUTPUT"
+            elif [ -f "./dist/System Resource Monitor ${{ steps.get-version.outputs.version }}.msi" ]; then
+              echo "已找到不带架构标识的安装程序: System Resource Monitor ${{ steps.get-version.outputs.version }}.msi"
+              echo "msi_path=./dist/System Resource Monitor ${{ steps.get-version.outputs.version }}.msi" >> "$GITHUB_OUTPUT"
+            fi
+            
+            # 如果没有找到任何文件，列出目录内容以便调试
+            if [ ! -f "./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-x64.exe" ] && 
+               [ ! -f "./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}.exe" ] && 
+               [ ! -f "./dist/System Resource Monitor ${{ steps.get-version.outputs.version }}.exe" ]; then
+              echo "未找到任何EXE文件，列出dist目录内容:"
+              ls -la ./dist/
+            fi
           elif [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
             # linux 文件路径 - 检查和设置所有 linux 构建产物
             echo "正在查找 Linux 安装文件..."
@@ -318,10 +326,12 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: matrix.os == 'windows-latest'
         with:
-          # 使用多行格式指定多个文件，正确指定文件路径
+          # 使用多行格式指定多个文件，包括带架构标识和不带架构标识的文件
           files: |
             ${{ steps.prepare-assets.outputs.exe_path }}
+            ${{ steps.prepare-assets.outputs.exe_x64_path }}
             ${{ steps.prepare-assets.outputs.msi_path }}
+            ${{ steps.prepare-assets.outputs.msi_x64_path }}
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           name: Release ${{ github.ref_name }}
           draft: false
