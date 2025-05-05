@@ -97,7 +97,6 @@
     "icon": "./public/icon.ico",
     "legalTrademarks": "Your Company, Inc.",
     "verifyUpdateCodeSignature": false,
-    "artifactName": "${productName}-${version}-${arch}-${target}.${ext}",
     "forceCodeSigning": false
   },
   "nsis": {
