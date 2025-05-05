@@ -115,16 +115,16 @@ jobs:
       # 仅在Windows操作系统上运行
       - name: Build Windows App
         if: matrix.os == 'windows-latest'
-        # 修改构建命令，与本地构建保持一致，并添加额外调试信息
+        # 修改构建命令，确保使用yarn或npx调用electron-builder
         run: |
           echo "开始构建Windows应用..."
           echo "查看electron-builder.json配置:"
           cat electron-builder.json
 
-          # 执行构建，确保使用正确的artifactName配置
+          # 执行构建，使用yarn调用electron-builder
           yarn run transpile:electron
           yarn run build
-          electron-builder --win --x64
+          yarn electron-builder --win --x64 # 修改这行，使用yarn调用electron-builder
         env:
           GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           DEBUG: electron-builder
