@@ -79,7 +79,8 @@
         "target": "portable",
         "arch": [
           "x64"
-        ]
+        ],
+        "artifactName": "${productName} ${version}.${ext}"
       },
       {
         "target": "msi",
@@ -91,7 +92,8 @@
         "target": "nsis",
         "arch": [
           "x64"
-        ]
+        ],
+        "artifactName": "${productName}-${version}.${ext}"
       }
     ],
     "icon": "./public/icon.ico",
