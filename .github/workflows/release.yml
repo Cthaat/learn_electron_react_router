@@ -203,6 +203,25 @@ jobs:
               echo "未找到 EXE 文件，列出 dist 目录内容:"
               ls -la ./dist/
             fi
+
+            # 检查不带架构标识的exe文件
+            if [ -f "./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}.msi" ]; then
+              echo "已找到可执行文件: System Resource Monitor-${{ steps.get-version.outputs.version }}.msi"
+              echo "exe_path=./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}.msi" >> "$GITHUB_OUTPUT"
+            elif [ -f "./dist/System Resource Monitor ${{ steps.get-version.outputs.version }}.msi" ]; then
+              echo "已找到可执行文件: System Resource Monitor ${{ steps.get-version.outputs.version }}.msi"
+              echo "exe_path=./dist/System Resource Monitor ${{ steps.get-version.outputs.version }}.msi" >> "$GITHUB_OUTPUT"
+            # 回退检查带架构标识的exe文件
+            elif [ -f "./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-x64.msi" ]; then
+              echo "已找到可执行文件: System Resource Monitor-${{ steps.get-version.outputs.version }}-x64.msi"
+              echo "exe_path=./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-x64.msi" >> "$GITHUB_OUTPUT"
+            elif [ -f "./dist/System Resource Monitor ${{ steps.get-version.outputs.version }}-x64.msi" ]; then
+              echo "已找到可执行文件: System Resource Monitor ${{ steps.get-version.outputs.version }}-x64.msi"
+              echo "exe_path=./dist/System Resource Monitor ${{ steps.get-version.outputs.version }}-x64.msi" >> "$GITHUB_OUTPUT"
+            else
+              echo "未找到 EXE 文件，列出 dist 目录内容:"
+              ls -la ./dist/
+            fi
             
           elif [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
             # linux 文件路径 - 检查和设置所有 linux 构建产物
