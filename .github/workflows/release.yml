@@ -204,21 +204,6 @@ jobs:
               ls -la ./dist/
             fi
             
-            # 检查不带架构标识的msi文件
-            if [ -f "./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}.msi" ]; then
-              echo "已找到安装程序: System Resource Monitor-${{ steps.get-version.outputs.version }}.msi"
-              echo "msi_path=./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}.msi" >> "$GITHUB_OUTPUT"
-            elif [ -f "./dist/System Resource Monitor ${{ steps.get-version.outputs.version }}.msi" ]; then
-              echo "已找到安装程序: System Resource Monitor ${{ steps.get-version.outputs.version }}.msi"
-              echo "msi_path=./dist/System Resource Monitor ${{ steps.get-version.outputs.version }}.msi" >> "$GITHUB_OUTPUT"
-            # 回退检查带架构标识的msi文件
-            elif [ -f "./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-x64.msi" ]; then
-              echo "已找到安装程序: System Resource Monitor-${{ steps.get-version.outputs.version }}-x64.msi"
-              echo "msi_path=./dist/System Resource Monitor-${{ steps.get-version.outputs.version }}-x64.msi" >> "$GITHUB_OUTPUT"
-            elif [ -f "./dist/System Resource Monitor ${{ steps.get-version.outputs.version }}-x64.msi" ]; then
-              echo "已找到安装程序: System Resource Monitor ${{ steps.get-version.outputs.version }}-x64.msi"
-              echo "msi_path=./dist/System Resource Monitor ${{ steps.get-version.outputs.version }}-x64.msi" >> "$GITHUB_OUTPUT"
-            fi
           elif [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
             # linux 文件路径 - 检查和设置所有 linux 构建产物
             echo "正在查找 Linux 安装文件..."
