@@ -98,7 +98,10 @@ jobs:
       - name: Build Windows App
         if: matrix.os == 'windows-latest'
         # 执行在package.json中定义的dist:win脚本
-        run: yarn dist:win
+        run: |
+          yarn run transpile:electron
+          yarn run build
+          yarn electron-builder --win --x64 # 修改这行，使用yarn调用electron-builder
         env:
           GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
