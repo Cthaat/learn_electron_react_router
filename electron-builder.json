@@ -110,7 +110,11 @@
     "createDesktopShortcut": true,
     "createStartMenuShortcut": true,
     "shortcutName": "系统资源监控器",
-    "license": "LICENSE.txt"
+    "license": "LICENSE.txt",
+    "artifactName": "${productName}-${version}-${arch}-installer.${ext}"
+  },
+  "portable": {
+    "artifactName": "${productName}-${version}-${arch}-portable.${ext}"
   },
   "publish": [
     {
