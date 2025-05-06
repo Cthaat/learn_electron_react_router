@@ -15,7 +15,10 @@
     "dist_react"
   ],
   "mac": {
-    "target": "dmg",
+    "target": [
+      "dmg",
+      "zip"
+    ],
     "icon": "./public/icon.icns",
     "darkModeSupport": true,
     "hardenedRuntime": true,
