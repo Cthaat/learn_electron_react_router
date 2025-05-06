@@ -17,9 +17,7 @@
   "mac": {
     "target": [
       "dmg",
-      "zip",
-      "pkg",
-      "mas"
+      "zip"
     ],
     "icon": "./public/icon.icns",
     "darkModeSupport": true,
