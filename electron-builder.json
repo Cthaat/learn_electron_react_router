@@ -25,7 +25,8 @@
     "darkModeSupport": true,
     "hardenedRuntime": true,
     "gatekeeperAssess": false,
-    "artifactName": "${productName}-${version}-${arch}.${ext}"
+    "artifactName": "${productName}-${version}-${arch}.${ext}",
+    "identity": null
   },
   "dmg": {
     "icon": "./public/icon.png",
